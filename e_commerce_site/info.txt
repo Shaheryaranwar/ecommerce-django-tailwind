@@ -1,0 +1,56 @@
+Instructions
+Python: 3.11.5
+python -m pip install --upgrade pip
+Django: 4.2 LTS or 5.0
+django project create krna h = django-admin startproject e_commerce_site
+cd  e_commerce_site
+Node.js: 20 LTS
+nvm install 20
+nvm use 20
+cd e_commerce_site is k bad
+npm install -D tailwindcss@3.4.17 postcss autoprefixer
+ab hum tailwind download or configure kry gy =npm install -D tailwindcss@3
+ab package.json may ja kr
+{
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/style.css",
+    "watch:css": "npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/style.css --watch"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}
+npx tailwindcss init -p
+8.40min video
+is k bad  root dir may ja kr static/src/input.css us  k bad static/dist/css/style.css
+us may yeh code add krna h @tailwind base;
+@tailwind components;
+@tailwind utilities;
+us k bad package.json may ja kr (optional)
+{
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./static/styles.css -o ./static/dist/css/styles.css",
+    "watch:css": "npx tailwindcss -i ./static/src/styles.css -o ./static/dist/css/styles.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  }
+}
+
+$ npm run watch:css
+
+
+Tailwind: CLI (manual)
+Database: PostgreSQL (later)
+
+
+ main application k folder may static/src/styke.css
