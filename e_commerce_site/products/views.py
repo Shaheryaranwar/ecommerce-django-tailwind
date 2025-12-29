@@ -60,18 +60,22 @@ from .models import Product, Category
 #         'related_products': related_products,
 #     }
 #     return render(request, 'products/product_detail.html',{ 'product': product, 'related_products': related_products })
-def product_list(request, category_slug):
+from .models import Product, Category
+
+def product_list(request, category_slug=None):
+    products = Product.objects.filter(is_active=True)
     category = None
-    products = Product.objects.filter(available=True)
-    categories = Category.ojects.all()
+
     if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
+        category = Category.objects.get(slug=category_slug)
         products = products.filter(category=category)
-    return render(request, 'products/products/list.html', {''
-    'products': products,
-      'category':category,
-      'categories':categories,                                                
-                                                           })
+
+    context = {
+        "category": category,
+        "products": products,
+    }
+
+    return render(request, "products/product_list.html", context)
 
 def product_detail(request, product_slug):
     product = get_object_or_404(Product, slug=product_slug, available=True)
