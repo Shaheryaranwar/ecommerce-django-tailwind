@@ -53,4 +53,5 @@ Tailwind: CLI (manual)
 Database: PostgreSQL (later)
 
 
- main application k folder may static/src/styke.css
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+changes krny sy pehly yeh command ek terminal py run krni h $ npm run watch:css
