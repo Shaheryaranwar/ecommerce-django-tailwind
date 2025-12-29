@@ -3,17 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{%block title%}My Proffesional Online E-Store{%endblock%}</title>
-    <meta name="description" content="A simple hello world page" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="favicon.ico" />
-
+    <title>{% block title %}E-Commerce Store{% endblock %}</title>
     {% load static %}
-    <link href="{% static  'dist/css/style.css'%}" real="stylesheet" />
+    <link href="{% static 'dist/css/style.css' %}" rel="stylesheet" />
   </head>
-  <body>
-    <script src="index.js"></script>
-    {% block content%}{%endblock%}
+  <body class="min-h-screen bg-gray-50">
+    <main class="container mx-auto px-4 py-8">
+      {% block content %}{% endblock %}
+    </main>
   </body>
 </html>

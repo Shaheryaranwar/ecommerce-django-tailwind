@@ -56,3 +56,4 @@ Database: PostgreSQL (later)
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 changes krny sy pehly yeh command ek terminal py run krni h 
 $ npm run watch:css
+42.23min
