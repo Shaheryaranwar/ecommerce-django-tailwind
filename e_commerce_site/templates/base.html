@@ -6,10 +6,13 @@
     <title>{% block title %}E-Commerce Store{% endblock %}</title>
     {% load static %}
     <link href="{% static 'dist/css/style.css' %}" rel="stylesheet" />
+    <meta
+      name="description"
+      content="An e-commerce store built with Django and Tailwind CSS"
+    />
+    <link rel="icon" href="favicon.png" />
   </head>
-  <body class="min-h-screen bg-gray-50">
-    <main class="container mx-auto px-4 py-8">
-      {% block content %}{% endblock %}
-    </main>
+  <body>
+    {% block content %}{% endblock %} {%include "includes/nav.html"%}
   </body>
 </html>
