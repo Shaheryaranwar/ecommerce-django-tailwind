@@ -5,13 +5,15 @@ from .models import Product, Category
 def product_list(request, category_slug=None):
     products = Product.objects.filter(is_active=True)
     category = None
+    categories = Category.objects.filter(is_active=True)
 
     if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
+        category = Category.objects.get(slug=category_slug)
         products = products.filter(category=category)
 
     context = {
         "category": category,
+        "categories": categories,  # ✅ THIS WAS MISSING
         "products": products,
     }
 
