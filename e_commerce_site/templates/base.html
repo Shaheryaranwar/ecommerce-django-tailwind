@@ -12,13 +12,13 @@
     />
     <link rel="icon" href="favicon.png" />
   </head>
-  <body>
-    <header>
-      {%include "includes/nav.html"%} 
+  <body class="bg-gray-100 text-gray-800">
+    <header class="shadow-md">
+      {% include "includes/nav.html"%}
     </header>
+
     <main class="container mx-auto mt-8 flex-grow">
-       {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
     </main>
-    
   </body>
 </html>
