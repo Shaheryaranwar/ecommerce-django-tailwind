@@ -1,0 +1,64 @@
+<footer class="bg-gray-900 text-gray-300 mt-16">
+  <div class="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+
+    <!-- BRAND -->
+    <div>
+      <h3 class="text-xl font-extrabold text-white mb-3">E-Com</h3>
+      <p class="text-sm text-gray-400">
+        Premium clothing for Men, Women & Kids.  
+        Designed for comfort, style & everyday life.
+      </p>
+    </div>
+
+    <!-- SHOP -->
+    <div>
+      <h4 class="text-white font-semibold mb-3">Shop</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="hover:text-white">Men</a></li>
+        <li><a href="#" class="hover:text-white">Women</a></li>
+        <li><a href="#" class="hover:text-white">Kids</a></li>
+        <li><a href="#" class="hover:text-white">New Arrivals</a></li>
+        <li><a href="#" class="hover:text-white">Sale</a></li>
+      </ul>
+    </div>
+
+    <!-- SUPPORT -->
+    <div>
+      <h4 class="text-white font-semibold mb-3">Support</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a href="#" class="hover:text-white">Contact Us</a></li>
+        <li><a href="#" class="hover:text-white">FAQs</a></li>
+        <li><a href="#" class="hover:text-white">Shipping & Returns</a></li>
+        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-white">Terms & Conditions</a></li>
+      </ul>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div>
+      <h4 class="text-white font-semibold mb-3">Stay Updated</h4>
+      <p class="text-sm text-gray-400 mb-3">
+        Subscribe to get special offers & updates.
+      </p>
+
+      <form class="flex">
+        <input
+          type="email"
+          placeholder="Your email"
+          class="w-full px-3 py-2 rounded-l bg-gray-800 text-gray-200 focus:outline-none"
+        />
+        <button
+          class="bg-purple-600 px-4 py-2 rounded-r text-white hover:bg-purple-700"
+        >
+          Subscribe
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="border-t border-gray-800 py-4 text-center text-sm text-gray-500">
+    © {{ now|date:"Y" }} E-Com. All rights reserved.
+  </div>
+</footer>
