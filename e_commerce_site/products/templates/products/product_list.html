@@ -23,28 +23,41 @@
   </aside>
 
   <!-- Products -->
-  <main class="w-3/4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {% for product in products %}
-        <div class="bg-white p-4 rounded shadow">
+<main class="w-3/4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for product in products %}
+      <div class="bg-white p-4 rounded shadow">
 
-          {% with product.images.first as image %}
-            {% if image %}
-              <img
-                src="{{ image.image.url }}"
-                alt="{{ product.name }}"
-                
-                class="w-full h-48 object-cover mb-3 rounded"
-              >
-            {% endif %}
-          {% endwith %}
+        {% with product.images.first as image %}
+          {% if image %}
+            <img
+              src="{{ image.image.url }}"
+              alt="{{ product.name }}"
+              class="w-full h-48 object-cover mb-3 rounded"
+            >
+          {% endif %}
+        {% endwith %}
 
-          <h3 class="font-bold">{{ product.name }}</h3>
-        </div>
-      {% empty %}
-        <p>No products found.</p>
-      {% endfor %}
-    </div>
+        <h3 class="font-bold">{{ product.name }}</h3>
+        
+        {% with product.variants.first as variant %}
+          {% if variant %}
+            <p class="text-lg font-semibold mt-2">
+              Rs {{ variant.price }}
+            </p>
+          {% else %}
+            <p class="text-sm text-gray-500 mt-2">
+              Price not available
+            </p>
+          {% endif %}
+        {% endwith %}
+
+      </div>
+    {% empty %}
+      <p>No products found.</p>
+    {% endfor %}
+  </div>
+</main>
   </main>
 
 </div>
