@@ -32,7 +32,7 @@
 
     {% with product.variants.first as variant %}
       {% if variant %}
-        <p class="text-2xl font-bold text-black">
+        <p class="text-2xl  text-blue-600 font-semibold ">
           Rs {{ variant.price }}
         </p>
       {% else %}
@@ -41,6 +41,11 @@
         </p>
       {% endif %}
     {% endwith %}
+              <form >
+            <button class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
+            Add to Cart
+            </button>
+          </form>
 
   </div>
 
