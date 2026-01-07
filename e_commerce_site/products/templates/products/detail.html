@@ -41,10 +41,12 @@
         </p>
       {% endif %}
     {% endwith %}
-              <form >
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
+              <form action= "{% url 'carts:cart_add' product.id %}" method="post" id ="add-to-cart-form">
+            {% csrf_token %}
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
             Add to Cart
             </button>
+            <p id="cart-message" class="text-green-600 mt-2 hidden">Item added to cart!</p>
           </form>
 
   </div>

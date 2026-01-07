@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from products.models import Product
 from .models import Cart, CartItem
-from django.views.decorators import require_POST, require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods
 from django.http import JsonResponse
 
 # Create your views here.
