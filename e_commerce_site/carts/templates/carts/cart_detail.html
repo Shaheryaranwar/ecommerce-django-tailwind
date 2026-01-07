@@ -2,5 +2,91 @@
 {% block title %}My Cart{% endblock %}
 
 {% block content %}
-<h2>My Cart</h2>
+<div class="container mx-auto p-6 max-w-6xl">
+
+  <h1 class="text-3xl font-bold mb-6">My Cart</h1>
+
+  {% if cart %}
+
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="w-full border-collapse">
+
+      <!-- HEADER -->
+      <thead class="bg-gray-100 text-sm font-semibold text-gray-700">
+        <tr>
+          <th class="p-4 text-left w-1/2">Product</th>
+          <th class="p-4 text-center w-1/6">Price</th>
+          <th class="p-4 text-center w-1/6">Quantity</th>
+          <th class="p-4 text-right w-1/6">Total</th>
+        </tr>
+      </thead>
+
+      <!-- BODY -->
+      <tbody>
+        {% for item in cart.items.all %}
+          {% with item.product.variants.first as variant %}
+          <tr class="border-b">
+
+            <!-- PRODUCT -->
+            <td class="p-4">
+              <div class="flex items-center gap-3">
+                {% with item.product.images.first as image %}
+                  {% if image %}
+                    <img
+                      src="{{ image.image.url }}"
+                      alt="{{ item.product.name }}"
+                      style="width:40px; height:40px; object-fit:cover;"
+                      class="rounded border"
+                    />
+                  {% endif %}
+                {% endwith %}
+
+                <span class="text-sm font-medium">
+                  {{ item.product.name|title|cut:"_" }}
+                </span>
+              </div>
+            </td>
+
+            <!-- PRICE -->
+            <td class="p-4 text-center text-sm">
+              {% if variant %}
+                Rs {{ variant.price }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+
+            <!-- QUANTITY -->
+            <td class="p-4 text-center text-sm">
+              {{ item.quantity }}
+            </td>
+
+            <!-- TOTAL -->
+            <td class="p-4 text-right text-sm font-semibold">
+  Rs {{ item.get_total_price }}
+</td>
+
+          </tr>
+          {% endwith %}
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+  <!-- SUBTOTAL -->
+  <div class="flex justify-end mt-6">
+    <div class="bg-gray-100 p-5 rounded-lg shadow-sm w-full max-w-sm">
+      <div class="flex justify-between text-lg font-bold">
+        <span>Subtotal</span>
+        <span>Rs {{ cart.get_total_cost }}</span>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+    <p class="text-center text-gray-500">Your cart is empty.</p>
+  {% endif %}
+
+</div>
 {% endblock %}

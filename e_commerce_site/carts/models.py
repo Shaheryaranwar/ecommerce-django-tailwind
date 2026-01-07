@@ -11,9 +11,12 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
-    cart=models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
-    product=models.ForeignKey(Product, related_name='cart_items',  on_delete=models.CASCADE)
-    quantity=models.PositiveIntegerField(default=1) 
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
 
     def get_total_price(self):
-        return self.product.get_price() * self.quantity
+        variant = self.product.variants.first()
+        if variant:
+            return variant.price * self.quantity
+        return 0
