@@ -52,5 +52,44 @@
   </div>
 
 </div>
+<script>
+document.getElementById("add-to-cart-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const url = form.action;
+  const formData = new FormData(form);
+  const messageElement = document.getElementById("cart-message");
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+    },
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    messageElement.classList.remove("hidden");
+
+    if (data.success) {
+      messageElement.textContent = data.message;
+      messageElement.classList.remove("text-red-600");
+      messageElement.classList.add("text-green-600");
+    } else {
+      messageElement.textContent = "Failed to add item to cart.";
+      messageElement.classList.remove("text-green-600");
+      messageElement.classList.add("text-red-600");
+    }
+  })
+  .catch(error => {
+    messageElement.classList.remove("hidden");
+    messageElement.textContent = "Something went wrong.";
+    messageElement.classList.add("text-red-600");
+    console.error("Error:", error);
+  });
+});
+</script>
+
 {% endblock %}
 

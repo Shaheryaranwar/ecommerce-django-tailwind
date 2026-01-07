@@ -24,7 +24,7 @@ def cart_add(request, product_id):
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    response_data = {'success': True, "message": f'Added {product.name} to cart', 'cart_item_count': cart.items.count()}
+    response_data = {'success': True, "message": f'Added {product.name} to Cart', 'cart_item_count': cart.items.count()}
     return JsonResponse(response_data)
 
 def cart_detail(request):
