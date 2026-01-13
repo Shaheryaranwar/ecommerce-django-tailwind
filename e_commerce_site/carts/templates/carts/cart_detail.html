@@ -38,12 +38,19 @@
                       style="width:40px; height:40px; object-fit:cover;"
                       class="rounded border"
                     />
+                    <div class="flex-grow">
+                    <a
+                      href="{% url 'products:product_detail' item.product.id item.product.slug %}"
+                      class="text-blue-600 hover:underline"
+                    >
+                      {{ item.product.name }}
+                    </a>
                   {% endif %}
+
+                  </div>
                 {% endwith %}
 
-                <span class="text-sm font-medium">
-                  {{ item.product.name|title|cut:"_" }}
-                </span>
+   
               </div>
             </td>
 
@@ -57,21 +64,46 @@
             </td>
 
             <!-- QUANTITY -->
-            <td class="p-4 text-center text-sm">
-              {{ item.quantity }}
+            <td class="p-4 text-center">
+              <div class="flex items-center justify-center gap-3">
+
+                <!-- Minus -->
+                <button
+                  class="px-3 py-1 bg-gray-200 rounded text-lg font-bold"
+                  onclick="updateCart('{% url 'carts:cart_decrease' item.product.id %}')"
+                >−</button>
+
+                <!-- Quantity -->
+                <span
+                  id="qty-{{ item.product.id }}"
+                  class="font-semibold w-6 text-center"
+                >
+                  {{ item.quantity }}
+                </span>
+
+                <!-- Plus -->
+                <button
+                  class="px-3 py-1 bg-gray-200 rounded text-lg font-bold"
+                  onclick="updateCart('{% url 'carts:cart_add' item.product.id %}')"
+                >+</button>
+
+              </div>
             </td>
 
             <!-- TOTAL -->
-            <td class="p-4 text-right text-sm font-semibold">
-  Rs {{ item.get_total_price }}
-</td>
-
+            <td
+            class="p-4 text-right text-sm font-semibold"
+            id="item-total-{{ item.product.id }}"
+          >
+            Rs {{ item.get_total_price }}
+          </td>
           </tr>
           {% endwith %}
         {% endfor %}
       </tbody>
 
     </table>
+
   </div>
 
   <!-- SUBTOTAL -->
@@ -84,7 +116,32 @@
       </div>
     </div>
   </div>
+<script>
+function updateCart(url) {
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": "{{ csrf_token }}",
+      "X-Requested-With": "XMLHttpRequest"
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const productId = url.split("/").slice(-2, -1)[0]
 
+      if (data.quantity > 0) {
+        document.getElementById(`qty-${productId}`).innerText = data.quantity
+        document.getElementById(`item-total-${productId}`).innerText = "Rs " + data.item_total
+      } else {
+        location.reload()  // item removed
+      }
+
+      document.getElementById("cart-total").innerText = "Rs " + data.cart_total
+    }
+  })
+}
+</script>
   {% else %}
     <p class="text-center text-gray-500">Your cart is empty.</p>
   {% endif %}
