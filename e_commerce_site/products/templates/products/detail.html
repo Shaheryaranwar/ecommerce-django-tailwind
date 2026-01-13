@@ -70,24 +70,20 @@ document.getElementById("add-to-cart-form").addEventListener("submit", function(
   })
   .then(response => response.json())
   .then(data => {
-    messageElement.classList.remove("hidden");
+  messageElement.classList.remove("hidden");
 
-    if (data.success) {
-      messageElement.textContent = data.message;
-      messageElement.classList.remove("text-red-600");
-      messageElement.classList.add("text-green-600");
-    } else {
-      messageElement.textContent = "Failed to add item to cart.";
-      messageElement.classList.remove("text-green-600");
-      messageElement.classList.add("text-red-600");
-    }
-  })
-  .catch(error => {
-    messageElement.classList.remove("hidden");
-    messageElement.textContent = "Something went wrong.";
-    messageElement.classList.add("text-red-600");
-    console.error("Error:", error);
-  });
+  if (data.success) {
+    messageElement.textContent = data.message;
+    messageElement.className = "text-green-600 mt-2";
+  } else {
+    messageElement.textContent = "Failed to add item to cart.";
+    messageElement.className = "text-red-600 mt-2";
+  }
+
+  setTimeout(() => {
+    messageElement.classList.add("hidden");
+  }, 2000);
+})
 });
 </script>
 

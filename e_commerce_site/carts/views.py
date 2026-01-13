@@ -29,6 +29,7 @@ def cart_add(request, product_id):
 
     return JsonResponse({
         "success": True,
+        "message": f"{product.name} added to cart",
         "quantity": cart_item.quantity,
         "item_total": cart_item.get_total_price(),
         "cart_total": cart.get_total_cost(),
