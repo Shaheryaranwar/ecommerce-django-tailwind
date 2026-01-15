@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'carts',
     'payments',
     'reviews',
+    'widget_tweaks',
 
 ]
 
