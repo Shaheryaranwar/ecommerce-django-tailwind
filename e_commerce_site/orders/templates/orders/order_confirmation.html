@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmation{% endblock %}
+
+{% block content %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                Confirm Order
+            </button>
+
+        </form>
+    </div>
+{% endblock %}
