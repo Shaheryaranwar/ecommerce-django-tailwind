@@ -1,0 +1,55 @@
+<!-- Account Details (Hidden by default) -->
+<div id="manual-payment-box"
+     class="hidden mt-4 border rounded-lg p-4 bg-gray-50 text-left">
+
+  <h3 class="font-semibold text-gray-900 mb-2">
+    Send Payment To
+  </h3>
+
+  <!-- JazzCash -->
+  <div id="jazzcash-box" class="hidden">
+    <p class="text-sm">
+      <strong>JazzCash Account:</strong><br>
+      Name: <span class="font-medium">Shaheryar Anwar</span><br>
+      Number: <span class="font-medium">03117701717</span>
+    </p>
+  </div>
+
+  <!-- EasyPaisa -->
+  <div id="easypaisa-box" class="hidden">
+    <p class="text-sm">
+      <strong>EasyPaisa Account:</strong><br>
+      Name: <span class="font-medium">Shaheryar Anwar</span><br>
+      Number: <span class="font-medium">03117701717</span>
+    </p>
+  </div>
+
+  <p class="text-xs text-gray-500 mt-2">
+    After sending payment, click <strong>Continue to Pay</strong>.
+  </p>
+</div>
+
+<script>
+  const radios = document.querySelectorAll('input[name="method"]');
+  const manualBox = document.getElementById("manual-payment-box");
+  const jazzcashBox = document.getElementById("jazzcash-box");
+  const easypaisaBox = document.getElementById("easypaisa-box");
+
+  radios.forEach(radio => {
+    radio.addEventListener("change", function () {
+      manualBox.classList.add("hidden");
+      jazzcashBox.classList.add("hidden");
+      easypaisaBox.classList.add("hidden");
+
+      if (this.value === "jazzcash") {
+        manualBox.classList.remove("hidden");
+        jazzcashBox.classList.remove("hidden");
+      }
+
+      if (this.value === "easypaisa") {
+        manualBox.classList.remove("hidden");
+        easypaisaBox.classList.remove("hidden");
+      }
+    });
+  });
+</script>

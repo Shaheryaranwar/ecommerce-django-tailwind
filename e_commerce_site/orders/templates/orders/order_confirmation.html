@@ -34,6 +34,31 @@
       Total: Rs {{ order.get_total_cost }}
     </div>
 
+    {% if not order.paid %}
+      <div class="mt-6 border-t pt-6 text-left">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+          Choose Payment Method
+        </h2>
+
+        <div class="grid grid-cols-1 gap-3">
+          <a
+            href="{% url 'payments:select' order.id %}"
+            class="w-full block text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition"
+          >
+            Pay Now
+          </a>
+
+          <p class="text-xs text-gray-500 text-center">
+            Secure payments via COD, Stripe, PayPal, JazzCash & EasyPaisa
+          </p>
+        </div>
+      </div>
+    {% else %}
+      <div class="mt-6 text-green-600 font-semibold">
+        ✔ Payment Completed
+      </div>
+    {% endif %}
+
     <a
       href="{% url 'products:product_list' %}"
       class="inline-block mt-6 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-lg transition"

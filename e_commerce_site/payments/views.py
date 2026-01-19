@@ -1,79 +1,76 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from orders.models import Order
 from .models import Payment
+from .services import cod, stripe, paypal, jazzcash, easypaisa
 
-def payment_select(request, order_id):
+SERVICE_MAP = {
+    "cod": cod.process_cod,
+    "stripe": stripe.process_stripe,
+    "paypal": paypal.process_paypal,
+    "jazzcash": jazzcash.process_jazzcash,
+    "easypaisa": easypaisa.process_easypaisa,
+}
+
+def select_payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request, "payments/select_method.html", {"order": order})
+
+def process_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
+    # ✅ PREVENT DUPLICATE PAYMENTS
+    if hasattr(order, "payment"):
+        return redirect("payments:success", order.payment.id)
+
     if request.method == "POST":
-        method = request.POST.get("payment_method")
+        method = request.POST.get("method")
 
-        # Decide currency
-        currency = "USD" if method in ['stripe', 'paypal'] else "PKR"
+        if not method:
+            return render(request, "payments/process.html", {
+                "order": order,
+                "error": "Please select a payment method."
+            })
 
+        # ✅ CREATE PAYMENT FIRST (VERY IMPORTANT)
         payment = Payment.objects.create(
             order=order,
             method=method,
             amount=order.get_total_cost(),
-            currency=currency,
-            status='pending'
+            status="pending",
         )
 
-        # ROUTING BASED ON METHOD
-        if method == 'cod':
-            payment.status = 'success'
+        # 🔹 CASH ON DELIVERY
+        if method == "cod":
+            payment.status = "pending"
+            payment.transaction_id = "COD"
             payment.save()
-            order.paid = True
-            order.save()
-            return redirect("payments:success", order.id)
+            return redirect("payments:success", payment.id)
 
-        if method == 'bank':
-            return redirect("payments:bank_instructions", payment.id)
+        # 🔹 STRIPE
+        elif method == "stripe":
+            return redirect("payments:stripe_start", payment.id)
 
-        if method in ['stripe', 'paypal']:
-            return redirect("payments:international_process", payment.id)
+        # 🔹 PAYPAL
+        elif method == "paypal":
+            return redirect("payments:paypal_start", payment.id)
 
-        if method in ['jazzcash', 'easypaisa']:
-            return redirect("payments:pakistan_process", payment.id)
+        # 🔹 JAZZCASH
+        elif method == "jazzcash":
+            payment.transaction_id = "JAZZCASH-MANUAL"
+            payment.save()
+            return redirect("payments:success", payment.id)
 
-    return render(request, "payments/select.html", {"order": order})
-def payment_success(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    return render(request, "payments/success.html", {"order": order})
+        # 🔹 EASYPAISA
+        elif method == "easypaisa":
+            payment.transaction_id = "EASYPAISA-MANUAL"
+            payment.save()
+            return redirect("payments:success", payment.id)
 
-def pakistan_process(request, payment_id):
+    return render(request, "payments/process.html", {"order": order})
+
+def payment_success(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id)
+    return render(request, "payments/success_method.html", {"payment": payment})
 
-    # Simulate payment success (for now)
-    payment.status = 'success'
-    payment.transaction_id = f"PK-{payment.id}"
-    payment.gateway_response = {"message": "Payment successful"}
-    payment.save()
-
-    order = payment.order
-    order.paid = True
-    order.save()
-
-    return redirect("payments:success", order.id)
-
-def international_process(request, payment_id):
-    payment = get_object_or_404(Payment, id=payment_id)
-
-    # Placeholder (Stripe/PayPal will go here)
-    payment.status = 'processing'
-    payment.save()
-
-    return render(request, "payments/international_processing.html", {
-        "payment": payment
-    })
-
-def bank_instructions(request, payment_id):
-    payment = get_object_or_404(Payment, id=payment_id)
-    return render(request, "payments/bank_instructions.html", {
-        "payment": payment
-    })
-
-def success(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    return render(request, "payments/success.html", {"order": order})
-
+def payment_failed(request):
+    return render(request, "payments/failed.html")
