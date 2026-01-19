@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Select Payment{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-8">
+
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+      Choose Payment Method
+    </h1>
+    <p class="text-gray-500 mb-6">
+      Order #{{ order.id }} · Total: 
+      <span class="font-semibold">Rs {{ order.get_total_cost }}</span>
+    </p>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <!-- COD -->
+      <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <input type="radio" name="payment_method" value="cod" class="mr-3" required>
+        <span class="font-semibold">Cash on Delivery</span>
+      </label>
+
+      <!-- JazzCash -->
+      <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <input type="radio" name="payment_method" value="jazzcash" class="mr-3">
+        <span class="font-semibold">JazzCash</span>
+      </label>
+
+      <!-- EasyPaisa -->
+      <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <input type="radio" name="payment_method" value="easypaisa" class="mr-3">
+        <span class="font-semibold">EasyPaisa</span>
+      </label>
+
+      <!-- Bank Transfer -->
+      <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <input type="radio" name="payment_method" value="bank" class="mr-3">
+        <span class="font-semibold">Bank Transfer</span>
+      </label>
+
+      <!-- Stripe -->
+      <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <input type="radio" name="payment_method" value="stripe" class="mr-3">
+        <span class="font-semibold">Credit / Debit Card (Stripe)</span>
+      </label>
+
+      <!-- PayPal -->
+      <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+        <input type="radio" name="payment_method" value="paypal" class="mr-3">
+        <span class="font-semibold">PayPal</span>
+      </label>
+
+      <button
+        type="submit"
+        class="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition"
+      >
+        Continue to Payment
+      </button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

@@ -3,7 +3,9 @@ module.exports = {
   content: ['./templates/**/*.html',
   './products/templates//**/*.html',
   './carts/templates//**/*.html',
-  './orders/templates//**/*.html'
+  './orders/templates//**/*.html',
+  './payments/templates//**/*.html'
+  
 ],
 
   
