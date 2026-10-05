@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="border-b border-linen bg-paper">
+  <div class="container-x py-8 md:py-12">
+    <nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+      <i data-lucide="chevron-right" class="h-3 w-3"></i>
+      <span class="font-semibold text-bark">Contact</span>
+    </nav>
+    <h1 class="mt-4 font-display text-3xl text-bark md:text-5xl">We'd love to hear from you</h1>
+  </div>
+</section>
+
+<section class="container-x py-12 md:py-16">
+  <div class="grid grid-cols-1 gap-12 lg:grid-cols-2">
+
+    <div>
+      <h2 class="font-display text-2xl text-bark">Send us a message</h2>
+      <p class="mt-2 text-sm text-cocoa">Questions about a piece, delivery, or a custom order — we reply within 24 hours.</p>
+
+      <form method="post" class="mt-8 space-y-5">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="id_name">Your name *</label>
+            <input type="text" name="name" id="id_name" required class="input" placeholder="Full name" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="id_email">Email *</label>
+            <input type="email" name="email" id="id_email" required class="input" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="id_message">Message *</label>
+          <textarea name="message" id="id_message" rows="6" required class="input" placeholder="How can we help?"></textarea>
+        </div>
+        <button type="submit" class="btn-dark">Send message</button>
+      </form>
+    </div>
+
+    <div>
+      <h2 class="font-display text-2xl text-bark">Visit a showroom</h2>
+      <div class="mt-8 space-y-4">
+        <div class="flex gap-4 border border-linen bg-paper p-6">
+          <i data-lucide="map-pin" class="h-5 w-5 shrink-0 text-clay"></i>
+          <div>
+            <p class="text-sm font-bold text-bark">Lahore — Flagship</p>
+            <p class="mt-1 text-sm leading-relaxed text-cocoa">42 MM Alam Road, Gulberg III<br />Mon–Sat, 11am–9pm</p>
+          </div>
+        </div>
+        <div class="flex gap-4 border border-linen bg-paper p-6">
+          <i data-lucide="map-pin" class="h-5 w-5 shrink-0 text-clay"></i>
+          <div>
+            <p class="text-sm font-bold text-bark">Karachi</p>
+            <p class="mt-1 text-sm leading-relaxed text-cocoa">Plot 14-C, Khayaban-e-Shahbaz, DHA Phase 6<br />Mon–Sat, 11am–9pm</p>
+          </div>
+        </div>
+        <div class="flex gap-4 border border-linen bg-paper p-6">
+          <i data-lucide="map-pin" class="h-5 w-5 shrink-0 text-clay"></i>
+          <div>
+            <p class="text-sm font-bold text-bark">Islamabad</p>
+            <p class="mt-1 text-sm leading-relaxed text-cocoa">Shop 7, Beverly Centre, F-7 Markaz<br />Mon–Sat, 11am–9pm</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 grid grid-cols-2 gap-4">
+        <div class="border border-linen bg-paper p-6">
+          <i data-lucide="phone" class="h-5 w-5 text-clay"></i>
+          <p class="mt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-stone">Call us</p>
+          <a href="tel:{{ store_phone }}" class="mt-1 block text-sm font-bold text-bark hover:text-clay">{{ store_phone }}</a>
+        </div>
+        <div class="border border-linen bg-paper p-6">
+          <i data-lucide="mail" class="h-5 w-5 text-clay"></i>
+          <p class="mt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-stone">Email us</p>
+          <a href="mailto:{{ store_email }}" class="mt-1 block text-sm font-bold text-bark hover:text-clay">{{ store_email }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

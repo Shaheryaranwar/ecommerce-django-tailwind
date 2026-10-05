@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load price_filters %}
+
+{% block title %}{% block page_title %}{{ page_title|default:"Shop" }}{% endblock %} — {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="border-b border-linen bg-paper">
+  <div class="container-x py-8 md:py-12">
+    {% block listing_header %}
+    <nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+      <i data-lucide="chevron-right" class="h-3 w-3"></i>
+      <span class="font-semibold text-bark">{{ page_title|default:"Shop All" }}</span>
+    </nav>
+    <h1 class="mt-4 font-display text-3xl text-bark md:text-5xl">{{ page_title|default:"Shop All Furniture" }}</h1>
+    <p class="mt-3 max-w-xl text-sm text-cocoa">
+      {% if products.paginator.count %}
+        {{ products.paginator.count }} piece{{ products.paginator.count|pluralize }} — solid wood, hand-finished, delivered nationwide.
+      {% else %}
+        No pieces match your filters yet.
+      {% endif %}
+    </p>
+    {% endblock %}
+  </div>
+</section>
+
+<section class="container-x py-10">
+  <div class="grid grid-cols-1 gap-10 lg:grid-cols-12">
+
+    {# ============ FILTERS SIDEBAR ============ #}
+    <aside class="lg:col-span-3">
+      <button type="button" id="filters-toggle" class="btn-outline mb-6 w-full justify-between lg:hidden">
+        Filters
+        <i data-lucide="sliders-horizontal" class="h-4 w-4"></i>
+      </button>
+
+      <form method="get" id="filters-form" class="hidden lg:block">
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}" />{% endif %}
+        {% if request.GET.is_new %}<input type="hidden" name="is_new" value="1" />{% endif %}
+        {% if request.GET.on_sale %}<input type="hidden" name="on_sale" value="1" />{% endif %}
+
+        {# Categories #}
+        <div class="border-b border-linen pb-6">
+          <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">Category</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li>
+              <a href="{% url 'products:product_list' %}" class="{% if not active_category_slug %}font-bold text-clay{% else %}text-cocoa hover:text-clay{% endif %}">
+                All furniture
+              </a>
+            </li>
+            {% for category in categories %}
+              <li>
+                <a href="{{ category.get_absolute_url }}" class="{% if active_category_slug == category.slug %}font-bold text-clay{% else %}text-cocoa hover:text-clay{% endif %}">
+                  {{ category.name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        {# Price #}
+        <div class="border-b border-linen py-6">
+          <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">Price (Rs)</h3>
+          <div class="mt-4 flex items-center gap-3">
+            <input type="number" name="min_price" value="{{ filters.min_price }}" placeholder="Min" min="0" class="input !py-2.5" />
+            <span class="text-stone">—</span>
+            <input type="number" name="max_price" value="{{ filters.max_price }}" placeholder="Max" min="0" class="input !py-2.5" />
+          </div>
+          <button type="submit" class="mt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-clay hover:underline">Apply price</button>
+        </div>
+
+        {# Material #}
+        <div class="border-b border-linen py-6">
+          <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">Material</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-cocoa">
+            {% for material in materials %}
+              <li>
+                <label class="flex cursor-pointer items-center gap-2.5 hover:text-bark">
+                  <input type="checkbox" name="material" value="{{ material }}"
+                         class="h-4 w-4 rounded-none border-linen text-clay accent-clay focus:ring-clay"
+                         {% if material in filters.materials %}checked{% endif %} />
+                  {{ material|title }}
+                </label>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        {# Brand #}
+        {% if brands %}
+        <div class="border-b border-linen py-6">
+          <h3 class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">Brand</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-cocoa">
+            {% for brand in brands %}
+              <li>
+                <label class="flex cursor-pointer items-center gap-2.5 hover:text-bark">
+                  <input type="checkbox" name="brand" value="{{ brand.slug }}"
+                         class="h-4 w-4 rounded-none border-linen text-clay accent-clay focus:ring-clay"
+                         {% if brand.slug in filters.brands %}checked{% endif %} />
+                  {{ brand.name }}
+                </label>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        {# Availability #}
+        <div class="border-b border-linen py-6">
+          <label class="flex cursor-pointer items-center gap-2.5 text-sm text-cocoa hover:text-bark">
+            <input type="checkbox" name="in_stock" value="1"
+                   class="h-4 w-4 rounded-none border-linen text-clay accent-clay focus:ring-clay"
+                   {% if filters.in_stock %}checked{% endif %} />
+            In stock only
+          </label>
+        </div>
+
+        <button type="submit" class="btn-dark mt-6 w-full">Apply filters</button>
+        {% if request.GET %}
+          <a href="{% url 'products:product_list' %}" class="mt-3 block text-center text-[11px] font-bold uppercase tracking-[0.18em] text-stone hover:text-bark">Clear all</a>
+        {% endif %}
+      </form>
+    </aside>
+
+    {# ============ PRODUCTS ============ #}
+    <div class="lg:col-span-9">
+      <div class="mb-6 flex items-center justify-between gap-4">
+        <p class="text-xs uppercase tracking-[0.15em] text-stone">
+          Showing {{ products|length }} of {{ products.paginator.count }} pieces
+        </p>
+        <label class="relative">
+          <span class="sr-only">Sort</span>
+          <select id="sort-select" name="sort"
+                  class="cursor-pointer appearance-none border border-linen bg-paper py-2.5 pl-4 pr-10 text-xs font-bold uppercase tracking-[0.14em] text-bark focus:border-bark focus:outline-none">
+            <option value="featured" {% if current_sort == "featured" %}selected{% endif %}>Featured</option>
+            <option value="newest" {% if current_sort == "newest" %}selected{% endif %}>Newest</option>
+            <option value="price_asc" {% if current_sort == "price_asc" %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if current_sort == "price_desc" %}selected{% endif %}>Price: High to Low</option>
+            <option value="name" {% if current_sort == "name" %}selected{% endif %}>Name A–Z</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone"></i>
+        </label>
+      </div>
+
+      {% if products %}
+        <div class="grid grid-cols-2 gap-x-4 gap-y-10 xl:grid-cols-3">
+          {% for product in products %}
+            <div data-reveal>{% include "partials/product_card.html" %}</div>
+          {% endfor %}
+        </div>
+        {% include "partials/pagination.html" %}
+      {% else %}
+        <div class="border border-dashed border-linen bg-paper py-24 text-center">
+          <i data-lucide="sofa" class="mx-auto h-10 w-10 text-stone/50"></i>
+          <h2 class="mt-4 font-display text-2xl text-bark">No pieces found</h2>
+          <p class="mt-2 text-sm text-stone">Try removing a filter or two.</p>
+          <a href="{% url 'products:product_list' %}" class="btn-outline mt-8">Clear all filters</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById("sort-select").addEventListener("change", function () {
+    const params = new URLSearchParams(window.location.search);
+    params.set("sort", this.value);
+    params.delete("page");
+    window.location.search = params.toString();
+  });
+  document.getElementById("filters-toggle").addEventListener("click", function () {
+    document.getElementById("filters-form").classList.toggle("hidden");
+  });
+</script>
+{% endblock %}

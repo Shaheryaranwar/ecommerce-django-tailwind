@@ -1,0 +1,109 @@
+{% if section.slides %}
+<section id="hero-slider" class="relative h-[72vh] max-h-[820px] min-h-[520px] overflow-hidden bg-bark" data-hero-slider>
+  {% for slide in section.slides %}
+    <div class="hero-slide absolute inset-0 transition-opacity duration-700 {% if not forloop.first %}opacity-0{% endif %}">
+      {% if slide.desktop_image or slide.mobile_image %}
+        <picture>
+          {% if slide.mobile_image %}
+            <source media="(max-width: 767px)" srcset="{{ slide.mobile_image.url }}" />
+          {% endif %}
+          {% if slide.desktop_image %}
+            <img src="{{ slide.desktop_image.url }}" alt="{{ slide.heading }}" class="absolute inset-0 h-full w-full object-cover" />
+          {% else %}
+            <img src="{{ slide.mobile_image.url }}" alt="{{ slide.heading }}" class="absolute inset-0 h-full w-full object-cover" />
+          {% endif %}
+        </picture>
+      {% endif %}
+      <div class="absolute inset-0 bg-gradient-to-r from-bark/85 via-bark/50 to-transparent"></div>
+      <div class="container-x relative flex h-full items-center">
+        <div class="max-w-xl py-16">
+          {% if slide.subheading %}
+            <p class="eyebrow !text-clay-light">{{ slide.subheading }}</p>
+          {% endif %}
+          <h1 class="mt-4 font-display text-4xl font-medium leading-[1.08] tracking-tight text-cream sm:text-5xl lg:text-6xl">
+            {{ slide.heading }}
+          </h1>
+          {% if slide.cta_label and slide.cta_link %}
+            <a href="{{ slide.cta_link }}" class="btn-light mt-8">
+              {{ slide.cta_label }} <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  {% if section.slides|length > 1 %}
+    <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4">
+      <button type="button" class="hero-prev flex h-10 w-10 items-center justify-center border border-cream/30 text-cream transition-colors hover:border-cream hover:bg-cream/10" aria-label="Previous slide">
+        <i data-lucide="chevron-left" class="h-5 w-5"></i>
+      </button>
+      <div class="flex items-center gap-2">
+        {% for slide in section.slides %}
+          <button type="button" class="hero-dot {% if forloop.first %}is-active{% endif %}" aria-label="Go to slide {{ forloop.counter }}"></button>
+        {% endfor %}
+      </div>
+      <button type="button" class="hero-next flex h-10 w-10 items-center justify-center border border-cream/30 text-cream transition-colors hover:border-cream hover:bg-cream/10" aria-label="Next slide">
+        <i data-lucide="chevron-right" class="h-5 w-5"></i>
+      </button>
+    </div>
+  {% endif %}
+</section>
+{% else %}
+{# static fallback hero — shown when the hero section is active but has no slides #}
+<section class="relative overflow-hidden">
+  <div class="container-x grid grid-cols-1 items-center gap-10 py-12 md:py-20 lg:grid-cols-12">
+    <div class="lg:col-span-5" data-reveal>
+      <p class="eyebrow">The Teak Edit — Autumn 2026</p>
+      <h1 class="mt-4 font-display text-[42px] font-medium leading-[1.05] tracking-tight text-bark sm:text-6xl lg:text-[68px]">
+        Furniture that feels<br class="hidden sm:block" />
+        like <em class="text-clay">home</em>,<br class="hidden sm:block" />
+        built to last.
+      </h1>
+      <p class="mt-6 max-w-md text-[15px] leading-relaxed text-cocoa">
+        Solid wood, honest materials and quiet luxury — handcrafted pieces for the
+        rooms where life happens. Delivered and assembled anywhere in Pakistan.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-4">
+        <a href="{% url 'products:product_list' %}" class="btn-dark">
+          Shop the collection
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </a>
+        <a href="{% url 'core:about' %}" class="btn-outline">Our craft</a>
+      </div>
+      <div class="mt-12 grid max-w-md grid-cols-3 divide-x divide-linen border-y border-linen">
+        <div class="py-4 pr-4">
+          <p class="font-display text-2xl text-bark">15+</p>
+          <p class="mt-1 text-[11px] uppercase tracking-[0.14em] text-stone">Years of craft</p>
+        </div>
+        <div class="px-4 py-4">
+          <p class="font-display text-2xl text-bark">25k+</p>
+          <p class="mt-1 text-[11px] uppercase tracking-[0.14em] text-stone">Homes furnished</p>
+        </div>
+        <div class="py-4 pl-4">
+          <p class="font-display text-2xl text-bark">4.8★</p>
+          <p class="mt-1 text-[11px] uppercase tracking-[0.14em] text-stone">Customer rating</p>
+        </div>
+      </div>
+    </div>
+    <div class="relative lg:col-span-7" data-reveal>
+      <div class="grid grid-cols-12 gap-3 sm:gap-4">
+        <div class="col-span-7">
+          <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1100&q=80"
+               alt="Aangan Living signature sofa" class="aspect-[4/5] w-full object-cover" />
+        </div>
+        <div class="col-span-5 flex flex-col gap-3 sm:gap-4">
+          <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=700&q=80"
+               alt="Accent armchair" class="aspect-square w-full flex-1 object-cover" />
+          <div class="bg-clay px-5 py-4 text-cream">
+            <p class="font-display text-lg leading-snug">Up to 30% off on selected living room pieces</p>
+            <a href="{% url 'products:product_list' %}?on_sale=1" class="mt-2 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] hover:underline">
+              Shop sale <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,26 @@
+{% load price_filters %}
+<section class="section-pad">
+  <div class="container-x grid grid-cols-1 gap-5 md:grid-cols-2">
+    <div class="relative overflow-hidden bg-bark p-10 text-cream md:p-12" data-reveal>
+      <i data-lucide="truck" class="h-8 w-8 text-clay-light"></i>
+      <h3 class="mt-6 font-display text-2xl text-cream md:text-3xl">Free delivery, nationwide</h3>
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-cream/70">
+        On all orders above {{ section.delivery_threshold|pkr }}. White-glove delivery and
+        assembly in Lahore, Karachi and Islamabad.
+      </p>
+      <a href="{% url 'products:product_list' %}" class="mt-7 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-cream transition-colors hover:text-clay-light">
+        Start shopping <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </a>
+    </div>
+    <div class="relative overflow-hidden bg-clay p-10 text-cream md:p-12" data-reveal>
+      <i data-lucide="tag" class="h-8 w-8 text-cream"></i>
+      <h3 class="mt-6 font-display text-2xl text-cream md:text-3xl">The sale edit</h3>
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-cream/85">
+        Selected living and dining pieces at up to 30% off — while stocks last.
+      </p>
+      <a href="{% url 'products:product_list' %}?on_sale=1" class="mt-7 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-cream transition-colors hover:bg-cream/10">
+        Shop the sale <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </a>
+    </div>
+  </div>
+</section>

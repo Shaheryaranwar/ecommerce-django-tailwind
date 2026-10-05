@@ -1,26 +1,37 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}E-Commerce Store{% endblock %}</title>
-    {% load static %}
-    <link href="{% static 'dist/css/style.css' %}" rel="stylesheet" />
-    <meta
-      name="description"
-      content="An e-commerce store built with Django and Tailwind CSS"
-    />
-    <link rel="icon" href="favicon.png" />
-  </head>
-  <body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
-    <header class="shadow-md">
-      {% include "includes/nav.html"%}
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ store_name }} — Handcrafted Furniture &amp; Home Décor{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Aangan Living — handcrafted furniture for living, dining, bedroom and office. Premium Pakistani craftsmanship, delivered nationwide.{% endblock %}" />
+  <link rel="icon" href="data:image/svg+xml,{% filter urlencode %}<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2326201A'/><text x='16' y='22' font-family='Georgia' font-size='17' fill='%23FAF7F2' text-anchor='middle'>A</text></svg>{% endfilter %}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="{% static 'dist/css/style.css' %}" rel="stylesheet" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="flex min-h-screen flex-col bg-cream" data-page="{% block page_key %}{% endblock %}">
 
-    <main class="container mx-auto mt-8 flex-grow">
-      {% block content %}{% endblock %}
-    </main>
-      {% include "includes/footer.html" %}
-  </body>
+  {% include "partials/announcement_bar.html" %}
+  {% include "partials/navbar.html" %}
+  {% include "partials/mobile_menu.html" %}
+
+  <main class="flex-1">
+    {% include "partials/messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/footer.html" %}
+
+  <div id="toast-root" class="pointer-events-none fixed bottom-6 left-1/2 z-[90] flex w-full max-w-sm -translate-x-1/2 flex-col items-center gap-3 px-4"></div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/cart.js' %}"></script>
+  <script src="{% static 'js/wishlist.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
 </html>
-

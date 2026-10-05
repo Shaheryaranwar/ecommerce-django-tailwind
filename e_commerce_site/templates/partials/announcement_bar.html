@@ -1,0 +1,19 @@
+{% if announcement %}
+<div class="relative z-40 bg-bark text-cream">
+  <div class="container-x flex h-10 items-center justify-center gap-3 text-[11px] font-medium tracking-wide sm:justify-between">
+    <div class="flex items-center gap-2 overflow-hidden">
+      <i data-lucide="truck" class="h-3.5 w-3.5 text-clay-light"></i>
+      <span id="announcement-text" class="truncate transition-opacity duration-500">
+        {{ announcement }}
+      </span>
+    </div>
+    <div class="hidden items-center gap-6 sm:flex">
+      <a href="tel:{{ store_phone }}" class="flex items-center gap-1.5 transition-colors hover:text-clay-light">
+        <i data-lucide="phone" class="h-3.5 w-3.5"></i>
+        <span>{{ store_phone }}</span>
+      </a>
+      <a href="{% url 'core:contact' %}" class="transition-colors hover:text-clay-light">Visit our showrooms</a>
+    </div>
+  </div>
+</div>
+{% endif %}

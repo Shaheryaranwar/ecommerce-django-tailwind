@@ -1,0 +1,21 @@
+{% if messages %}
+  <div id="django-messages" class="pointer-events-none fixed inset-x-0 top-20 z-[70] flex flex-col items-center gap-2 px-4">
+    {% for message in messages %}
+      <div class="message-toast pointer-events-auto flex w-full max-w-md items-center gap-3 border px-5 py-4 text-sm shadow-[0_20px_50px_-20px_rgba(38,32,26,0.35)]
+                  {% if message.tags == 'success' %}border-moss/30 bg-paper text-bark{% elif message.tags == 'error' %}border-red-200 bg-paper text-red-700{% else %}border-linen bg-paper text-bark{% endif %}"
+           data-auto-dismiss="6000">
+        {% if message.tags == 'success' %}
+          <i data-lucide="circle-check" class="h-5 w-5 shrink-0 text-moss"></i>
+        {% elif message.tags == 'error' %}
+          <i data-lucide="circle-alert" class="h-5 w-5 shrink-0 text-red-500"></i>
+        {% else %}
+          <i data-lucide="info" class="h-5 w-5 shrink-0 text-clay"></i>
+        {% endif %}
+        <span>{{ message }}</span>
+        <button type="button" class="message-close ml-auto text-stone transition-colors hover:text-bark" aria-label="Dismiss">
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

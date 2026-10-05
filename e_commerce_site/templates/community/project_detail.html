@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} — Community — {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="container-x py-10 md:py-16">
+  <nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+    <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+    <span>/</span>
+    <a href="{% url 'community:showcase' %}" class="transition-colors hover:text-clay">Community</a>
+    <span>/</span>
+    <span class="text-bark">{{ project.title|truncatechars:40 }}</span>
+  </nav>
+
+  <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-2">
+    {# Gallery #}
+    <div>
+      {% with images=project.images.all %}
+        {% if images %}
+          <div class="grid gap-3 {% if images.count > 1 %}grid-cols-2{% endif %}">
+            {% for image in images %}
+              <img src="{{ image.image.url }}" alt="{{ image.caption|default:project.title }}"
+                   class="w-full {% if forloop.first and images.count > 1 %}col-span-2 aspect-[16/10]{% else %}aspect-square{% endif %} object-cover bg-sand"
+                   loading="lazy" />
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="flex aspect-[4/3] items-center justify-center bg-sand text-stone">
+            <i data-lucide="image" class="h-10 w-10"></i>
+          </div>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    {# Details #}
+    <div>
+      <p class="eyebrow">{{ project.get_category_display }}</p>
+      <h1 class="mt-3 font-display text-3xl text-bark md:text-4xl">{{ project.title }}</h1>
+      <p class="mt-3 text-sm text-cocoa">
+        by <span class="font-bold text-bark">{{ project.user.get_full_name|default:project.user.username }}</span>
+        <span class="mx-2 text-linen">|</span> {{ project.created_at|date:"F j, Y" }}
+      </p>
+
+      <div class="mt-6 border-t border-linen pt-6 text-sm leading-relaxed text-cocoa">
+        {{ project.description|linebreaks }}
+      </div>
+
+      {% if project.documents.all %}
+        <div class="mt-6">
+          <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-bark">Proof documents</p>
+          <div class="mt-3 flex flex-col gap-2">
+            {% for doc in project.documents.all %}
+              <a href="{{ doc.file.url }}" target="_blank" rel="noopener"
+                 class="flex items-center gap-3 border border-linen bg-paper px-4 py-3 transition-colors hover:border-clay">
+                <i data-lucide="file-text" class="h-4 w-4 shrink-0 text-clay"></i>
+                <span class="text-sm font-semibold text-bark">{{ doc.title }}</span>
+                <span class="ml-auto flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.14em] text-stone">
+                  Download <i data-lucide="download" class="h-3.5 w-3.5"></i>
+                </span>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <a href="{% url 'community:showcase' %}" class="btn-outline mt-8 inline-flex">Back to community</a>
+    </div>
+  </div>
+
+  {# Related #}
+  {% if related %}
+    <div class="mt-20">
+      <p class="eyebrow">More from the community</p>
+      <h2 class="mt-3 font-display text-2xl text-bark">You may also like</h2>
+      <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+        {% for item in related %}
+          <a href="{{ item.get_absolute_url }}" class="group block">
+            <div class="overflow-hidden bg-sand">
+              {% if item.cover_image %}
+                <img src="{{ item.cover_image.image.url }}" alt="{{ item.title }}"
+                     class="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+              {% endif %}
+            </div>
+            <p class="mt-3 text-[10px] font-bold uppercase tracking-[0.18em] text-clay">{{ item.get_category_display }}</p>
+            <h3 class="mt-1 font-display text-base text-bark transition-colors group-hover:text-clay">{{ item.title }}</h3>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% load price_filters %}
+
+{% block title %}{{ product.meta_title|default:product.name }} — {{ store_name }}{% endblock %}
+{% block meta_description %}{{ product.meta_description|default:product.short_description|default:product.description|striptags|truncatechars:155 }}{% endblock %}
+
+{% block content %}
+<section class="container-x py-8 md:py-12">
+  <nav class="flex flex-wrap items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+    <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+    <i data-lucide="chevron-right" class="h-3 w-3"></i>
+    <a href="{{ product.category.get_absolute_url }}" class="transition-colors hover:text-clay">{{ product.category.name }}</a>
+    <i data-lucide="chevron-right" class="h-3 w-3"></i>
+    <span class="font-semibold text-bark">{{ product.name }}</span>
+  </nav>
+
+  <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+
+    {# ============ GALLERY ============ #}
+    <div>
+      <div class="relative overflow-hidden bg-sand">
+        {% if product.primary_image %}
+          <img id="main-image" src="{{ product.primary_image.display_url }}" alt="{{ product.name }}"
+               class="aspect-[4/5] w-full object-cover transition-opacity duration-300" />
+        {% else %}
+          <div class="flex aspect-[4/5] items-center justify-center text-stone">
+            <i data-lucide="armchair" class="h-12 w-12"></i>
+          </div>
+        {% endif %}
+        {% if product.discount_percentage %}
+          <span class="card-badge bg-clay text-white">-{{ product.discount_percentage }}%</span>
+        {% elif product.is_new %}
+          <span class="card-badge">New</span>
+        {% endif %}
+      </div>
+      {% if product.images.all|length > 1 %}
+        <div class="mt-3 grid grid-cols-5 gap-3">
+          {% for image in product.images.all %}
+            <button type="button" class="gallery-thumb group overflow-hidden border-2 {% if forloop.first %}border-bark{% else %}border-transparent{% endif %}" data-src="{{ image.display_url }}">
+              <img src="{{ image.display_url }}" alt="{{ image.alt_text|default:product.name }}"
+                   class="aspect-square w-full object-cover transition-opacity duration-300 group-hover:opacity-80" />
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    {# ============ INFO ============ #}
+    <div>
+      <a href="{{ product.category.get_absolute_url }}" class="eyebrow">{{ product.category.name }}</a>
+      <h1 class="mt-3 font-display text-3xl leading-tight text-bark md:text-[42px]">{{ product.name }}</h1>
+
+      {# rating summary #}
+      <a href="#reviews" class="mt-3 inline-flex items-center gap-2 text-sm">
+        <span class="flex text-clay">
+          {% for i in "12345" %}
+            <i data-lucide="star" class="h-3.5 w-3.5 {% if forloop.counter <= rating_data.average|floatformat:0|add:0 %}fill-current{% endif %}"></i>
+          {% endfor %}
+        </span>
+        <span class="text-stone">{{ rating_data.average|floatformat:1 }} ({{ rating_data.count }} review{{ rating_data.count|pluralize }})</span>
+      </a>
+
+      {# price #}
+      <div class="mt-5 flex items-baseline gap-3">
+        <span id="variant-price" class="font-display text-3xl text-bark">{{ product.price|pkr }}</span>
+        <span id="variant-compare-price" class="text-base text-stone line-through {% if not product.compare_price or product.compare_price <= product.price %}hidden{% endif %}">{{ product.compare_price|pkr }}</span>
+      </div>
+
+      {% if product.short_description %}
+        <p class="mt-5 max-w-lg text-[15px] leading-relaxed text-cocoa">{{ product.short_description }}</p>
+      {% endif %}
+
+      {# ============ ADD TO CART FORM ============ #}
+      {% if first_variant %}
+      <form method="post" action="{% url 'cart:cart_add' first_variant.id %}" id="product-form" class="mt-8" data-add-to-cart data-product-form>
+        {% csrf_token %}
+        <input type="hidden" name="quantity" id="qty-input" value="1" />
+
+        {# variant (finish) selection #}
+        {% if product.variants.all|length > 1 %}
+          {% if attribute_groups %}
+            <div class="mb-6 space-y-5" data-attribute-selector>
+              {% for group in attribute_groups %}
+                <div data-attribute-id="{{ group.attribute.id }}">
+                  <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">
+                    {{ group.attribute.name }}
+                  </p>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    {% for value in group.values %}
+                      <button type="button" class="attr-pill" data-value-id="{{ value.id }}">{{ value.value }}</button>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+              <p class="text-xs text-stone">
+                Selected: <span id="variant-name" class="font-semibold text-clay">{{ product.variants.all.0.name }}</span>
+              </p>
+              {% for variant in product.variants.all %}
+                <input type="radio" name="variant" value="{{ variant.id }}" data-price="{{ variant.price }}"
+                       data-compare-price="{{ variant.compare_price|default:'' }}" data-name="{{ variant.name }}"
+                       data-stock="{{ variant.stock }}" data-values="{% for v in variant.attribute_values.all %}{{ v.id }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                       {% if forloop.first %}checked{% endif %} class="sr-only" />
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="mb-6">
+              <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">
+                Finish — <span id="variant-name" class="text-clay">{{ product.variants.all.0.name }}</span>
+              </p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {% for variant in product.variants.all %}
+                  <label class="cursor-pointer">
+                    <input type="radio" name="variant" value="{{ variant.id }}" data-price="{{ variant.price }}" data-name="{{ variant.name }}"
+                           data-stock="{{ variant.stock }}" {% if forloop.first %}checked{% endif %} class="peer sr-only" />
+                    <span class="block border px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-cocoa transition-all duration-200 hover:border-bark peer-checked:border-bark peer-checked:bg-bark peer-checked:text-cream">
+                      {{ variant.name }}
+                    </span>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% elif product.variants.all|length == 1 %}
+          <div class="mb-6">
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-bark">
+              Finish — <span id="variant-name" class="text-clay">{{ product.variants.all.0.name }}</span>
+            </p>
+            <input type="radio" name="variant" value="{{ product.variants.all.0.id }}" class="sr-only" checked />
+          </div>
+        {% endif %}
+
+        {# quantity + stock #}
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="flex items-center border border-linen bg-paper">
+            <button type="button" class="qty-btn flex h-12 w-12 items-center justify-center text-bark transition-colors hover:text-clay" data-delta="-1" aria-label="Decrease quantity">
+              <i data-lucide="minus" class="h-4 w-4"></i>
+            </button>
+            <span id="qty-display" class="w-10 text-center text-sm font-bold">1</span>
+            <button type="button" class="qty-btn flex h-12 w-12 items-center justify-center text-bark transition-colors hover:text-clay" data-delta="1" aria-label="Increase quantity">
+              <i data-lucide="plus" class="h-4 w-4"></i>
+            </button>
+          </div>
+          <p id="stock-text" class="flex items-center gap-1.5 text-xs font-semibold {% if product.in_stock %}text-moss{% else %}text-red-600{% endif %}">
+            <i data-lucide="{% if product.in_stock %}circle-check{% else %}circle-x{% endif %}" class="h-4 w-4"></i>
+            {% if product.in_stock %}In stock — ships in 3–5 days{% else %}Currently out of stock{% endif %}
+          </p>
+        </div>
+
+        {# actions #}
+        <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+          <button type="submit" id="add-to-cart-btn" class="btn-dark flex-1" {% if not product.in_stock %}disabled{% endif %}>
+            <i data-lucide="shopping-bag" class="h-4 w-4"></i>
+            {% if product.in_stock %}Add to cart{% else %}Out of stock{% endif %}
+          </button>
+          <button type="submit" id="buy-now-btn" class="btn-clay flex-1" {% if not product.in_stock %}disabled{% endif %}>
+            Buy now
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </button>
+        </div>
+      </form>
+      {% endif %}
+
+      {# wishlist #}
+      <form method="post" action="{% url 'wishlist:toggle' product.id %}" class="mt-5" data-wishlist-toggle>
+        {% csrf_token %}
+        <button type="submit" class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-cocoa transition-colors hover:text-clay">
+          <i data-lucide="heart" class="h-4 w-4 {% if product.id in wishlist_ids %}fill-clay text-clay{% endif %}"></i>
+          {% if product.id in wishlist_ids %}Saved to wishlist{% else %}Save to wishlist{% endif %}
+        </button>
+      </form>
+
+      {# assurances #}
+      <ul class="mt-8 divide-y divide-linen border-y border-linen text-sm text-cocoa">
+        <li class="flex items-center gap-3 py-3">
+          <i data-lucide="truck" class="h-4 w-4 text-clay"></i>
+          Free delivery on orders above Rs 100,000 — nationwide
+        </li>
+        <li class="flex items-center gap-3 py-3">
+          <i data-lucide="wrench" class="h-4 w-4 text-clay"></i>
+          Free assembly in Lahore, Karachi &amp; Islamabad
+        </li>
+        <li class="flex items-center gap-3 py-3">
+          <i data-lucide="rotate-ccw" class="h-4 w-4 text-clay"></i>
+          14-day returns &amp; 5-year frame warranty
+        </li>
+      </ul>
+
+      {# ============ ACCORDION ============ #}
+      <div class="mt-8 divide-y divide-linen border-y border-linen">
+        <div class="accordion-item">
+          <button type="button" class="accordion-toggle flex w-full items-center justify-between py-4 text-[12px] font-bold uppercase tracking-[0.18em] text-bark">
+            Description
+            <i data-lucide="plus" class="accordion-icon h-4 w-4 text-clay transition-transform duration-300"></i>
+          </button>
+          <div class="accordion-body hidden pb-5">
+            <div class="rich-text text-sm leading-relaxed text-cocoa">{{ product.description|safe }}</div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button type="button" class="accordion-toggle flex w-full items-center justify-between py-4 text-[12px] font-bold uppercase tracking-[0.18em] text-bark">
+            Specifications
+            <i data-lucide="plus" class="accordion-icon h-4 w-4 text-clay transition-transform duration-300"></i>
+          </button>
+          <div class="accordion-body hidden pb-5">
+            <dl class="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
+              {% if product.sku %}<div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">SKU</dt><dd class="font-semibold text-bark">{{ product.sku }}</dd></div>{% endif %}
+              <div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">Material</dt><dd class="font-semibold text-bark">{{ product.get_material_display|default:"—" }}</dd></div>
+              <div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">Finish</dt><dd class="font-semibold text-bark">{{ product.finish|default:"—" }}</dd></div>
+              <div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">Dimensions</dt><dd class="font-semibold text-bark">{{ product.dimensions|default:"—" }}</dd></div>
+              <div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">Assembly</dt><dd class="font-semibold text-bark">{% if product.assembly_required %}Required{% else %}None — delivered ready{% endif %}</dd></div>
+              <div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">Warranty</dt><dd class="font-semibold text-bark">{{ product.warranty|default:"5-year frame warranty" }}</dd></div>
+              {% if product.brand %}
+                <div class="flex justify-between border-b border-linen pb-2"><dt class="text-stone">Brand</dt><dd class="font-semibold text-bark">{{ product.brand.name }}</dd></div>
+              {% endif %}
+            </dl>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button type="button" class="accordion-toggle flex w-full items-center justify-between py-4 text-[12px] font-bold uppercase tracking-[0.18em] text-bark">
+            Delivery &amp; returns
+            <i data-lucide="plus" class="accordion-icon h-4 w-4 text-clay transition-transform duration-300"></i>
+          </button>
+          <div class="accordion-body hidden pb-5">
+            <p class="text-sm leading-relaxed text-cocoa">
+              Delivered within 5–10 working days nationwide. Our team will call to
+              schedule a delivery window. Free assembly in Lahore, Karachi and
+              Islamabad; a flat assembly fee applies elsewhere. Changed your mind?
+              Return within 14 days in original condition for a full refund.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ============ REVIEWS ============ #}
+<section id="reviews" class="border-t border-linen bg-paper">
+  <div class="container-x py-14 md:py-20">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
+      <div>
+        <p class="eyebrow">Reviews</p>
+        <h2 class="mt-3 font-display text-3xl text-bark">What customers say</h2>
+        <div class="mt-6 flex items-end gap-4">
+          <p class="font-display text-6xl leading-none text-bark">{{ rating_data.average|floatformat:1 }}</p>
+          <div class="pb-1">
+            <div class="flex text-clay">
+              {% for i in "12345" %}
+                <i data-lucide="star" class="h-4 w-4 {% if forloop.counter <= rating_data.average|floatformat:0|add:0 %}fill-current{% endif %}"></i>
+              {% endfor %}
+            </div>
+            <p class="mt-1 text-xs text-stone">{{ rating_data.count }} review{{ rating_data.count|pluralize }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        {% if user_review %}
+          <div class="mb-8 border border-linen bg-sand/50 p-6">
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-clay">Your review</p>
+            <div class="mt-2 flex text-clay">
+              {% for i in "12345" %}
+                <i data-lucide="star" class="h-4 w-4 {% if forloop.counter <= user_review.rating %}fill-current{% endif %}"></i>
+              {% endfor %}
+            </div>
+            <p class="mt-3 text-sm text-cocoa">“{{ user_review.comment }}”</p>
+          </div>
+        {% elif user.is_authenticated %}
+          <form method="post" action="{% url 'reviews:submit' product.slug %}" class="mb-10 border border-linen p-6">
+            {% csrf_token %}
+            <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-clay">Write a review</p>
+            <div class="mt-4 flex items-center gap-1" id="star-input">
+              {% for value in "54321" %}
+                <label class="cursor-pointer">
+                  <input type="radio" name="rating" value="{{ value }}" class="peer sr-only" {% if forloop.first %}checked{% endif %} />
+                  <i data-lucide="star" class="star-option h-6 w-6 text-linen transition-colors peer-checked:text-clay"></i>
+                </label>
+              {% endfor %}
+            </div>
+            <input type="text" name="title" maxlength="120" placeholder="Title (optional)" class="input mt-4" />
+            <textarea name="comment" rows="4" required placeholder="How is the quality, finish and comfort?" class="input mt-3"></textarea>
+            <button type="submit" class="btn-dark mt-4">Publish review</button>
+          </form>
+        {% else %}
+          <div class="mb-10 flex flex-wrap items-center justify-between gap-4 border border-linen bg-sand/50 p-6">
+            <p class="text-sm text-cocoa">Own this piece? Share your experience with other customers.</p>
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn-outline !px-5 !py-3">Sign in to review</a>
+          </div>
+        {% endif %}
+
+        {% if reviews %}
+          <ul class="divide-y divide-linen">
+            {% for review in reviews %}
+              <li class="py-6">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex items-center gap-3">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-bark font-display text-sm text-cream">
+                      {{ review.user.first_name|default:review.user.username|slice:":1"|upper }}
+                    </span>
+                    <div>
+                      <p class="text-sm font-bold text-bark">{{ review.user.first_name|default:review.user.username }}</p>
+                      <p class="text-xs text-stone">{{ review.created_at|date:"F j, Y" }}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="flex text-clay">
+                      {% for i in "12345" %}
+                        <i data-lucide="star" class="h-3.5 w-3.5 {% if forloop.counter <= review.rating %}fill-current{% endif %}"></i>
+                      {% endfor %}
+                    </span>
+                    {% if review.verified_purchase %}
+                      <span class="flex items-center gap-1 border border-moss/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-moss">
+                        <i data-lucide="badge-check" class="h-3 w-3"></i> Verified
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+                {% if review.title %}<p class="mt-3 text-sm font-bold text-bark">{{ review.title }}</p>{% endif %}
+                <p class="mt-1 text-sm leading-relaxed text-cocoa">{{ review.comment }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% elif not user_review %}
+          <p class="border border-dashed border-linen py-10 text-center text-sm text-stone">No reviews yet — be the first to review this piece.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ============ RELATED ============ #}
+{% if related %}
+<section class="section-pad">
+  <div class="container-x">
+    <h2 class="mb-10 font-display text-3xl text-bark">You may also like</h2>
+    <div class="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+      {% for product in related %}
+        <div data-reveal>{% include "partials/product_card.html" %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

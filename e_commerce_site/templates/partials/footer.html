@@ -1,0 +1,89 @@
+{% load price_filters %}
+<footer class="mt-auto bg-bark text-cream/80">
+  {# Newsletter #}
+  <div class="border-b border-cream/10">
+    <div class="container-x flex flex-col items-start justify-between gap-6 py-12 md:flex-row md:items-center">
+      <div>
+        <h3 class="font-display text-2xl text-cream md:text-3xl">Design inspiration, delivered.</h3>
+        <p class="mt-2 text-sm text-cream/60">New collections, private sales and styling notes — once a week, no noise.</p>
+      </div>
+      <form method="post" action="{% url 'core:home' %}" class="flex w-full max-w-md" id="newsletter-form">
+        {% csrf_token %}
+        <input type="email" name="newsletter_email" placeholder="Your email address" required
+               class="w-full border border-cream/20 bg-transparent px-4 py-3.5 text-sm text-cream placeholder:text-cream/40 focus:border-clay focus:outline-none" />
+        <button type="submit" class="shrink-0 bg-cream px-6 text-[11px] font-bold uppercase tracking-[0.18em] text-bark transition-colors hover:bg-clay hover:text-white">
+          Subscribe
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {# Link columns #}
+  <div class="container-x grid grid-cols-2 gap-10 py-14 md:grid-cols-4 lg:grid-cols-5">
+    <div class="col-span-2 lg:col-span-2">
+      <span class="font-display text-2xl text-cream">Aangan<span class="text-clay-light"> Living</span></span>
+      <p class="mt-4 max-w-sm text-sm leading-relaxed text-cream/60">
+        Handcrafted furniture and décor, made with solid wood and honest materials.
+        Designed in Pakistan for the way we live, gather and host.
+      </p>
+      <div class="mt-6 flex gap-3">
+        <a href="#" class="flex h-10 w-10 items-center justify-center border border-cream/15 text-cream/70 transition-colors hover:border-clay hover:text-clay-light" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M13.5 9H16l.5-3h-3V4.5c0-.9.3-1.5 1.6-1.5H16.6V.2C16.3.2 15.3 0 14.1 0 11.6 0 9.9 1.5 9.9 4.3V6H7v3h2.9v9h3.6V9Z"/></svg>
+        </a>
+        <a href="#" class="flex h-10 w-10 items-center justify-center border border-cream/15 text-cream/70 transition-colors hover:border-clay hover:text-clay-light" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" class="flex h-10 w-10 items-center justify-center border border-cream/15 text-cream/70 transition-colors hover:border-clay hover:text-clay-light" aria-label="Pinterest">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.3-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.6 2.2-.9 3.4-.2 1 .5 1.9 1.5 1.9 1.9 0 3.3-2 3.3-4.8 0-2.5-1.8-4.3-4.4-4.3-3 0-4.7 2.2-4.7 4.5 0 .9.3 1.9.8 2.4.1.1.1.2.1.3l-.3 1.2c0 .2-.1.2-.3.1-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2.1-.6-2.4-1.2l-.7 2.5c-.2.9-.9 2-1.3 2.7.9.3 1.9.4 2.9.4 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h4 class="text-[11px] font-bold uppercase tracking-[0.22em] text-cream">Shop</h4>
+      <ul class="mt-5 space-y-3 text-sm">
+        {% for category in nav_categories|slice:":5" %}
+          <li><a href="{{ category.get_absolute_url }}" class="text-cream/60 transition-colors hover:text-clay-light">{{ category.name }}</a></li>
+        {% endfor %}
+        <li><a href="{% url 'products:product_list' %}?on_sale=1" class="text-cream/60 transition-colors hover:text-clay-light">Sale</a></li>
+        <li><a href="{% url 'community:showcase' %}" class="text-cream/60 transition-colors hover:text-clay-light">Community</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-[11px] font-bold uppercase tracking-[0.22em] text-cream">Customer Care</h4>
+      <ul class="mt-5 space-y-3 text-sm">
+        <li><a href="{% url 'core:contact' %}" class="text-cream/60 transition-colors hover:text-clay-light">Contact Us</a></li>
+        <li><a href="{% url 'orders:order_history' %}" class="text-cream/60 transition-colors hover:text-clay-light">Track My Order</a></li>
+        <li><a href="{% url 'core:contact' %}" class="text-cream/60 transition-colors hover:text-clay-light">Delivery &amp; Assembly</a></li>
+        <li><a href="{% url 'core:contact' %}" class="text-cream/60 transition-colors hover:text-clay-light">Returns &amp; Warranty</a></li>
+        <li><a href="{% url 'core:about' %}" class="text-cream/60 transition-colors hover:text-clay-light">Our Story</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-[11px] font-bold uppercase tracking-[0.22em] text-cream">Showrooms</h4>
+      <ul class="mt-5 space-y-4 text-sm text-cream/60">
+        <li>MM Alam Road, Lahore</li>
+        <li>Khayaban-e-Shahbaz, Karachi</li>
+        <li>F-7 Markaz, Islamabad</li>
+        <li class="pt-1"><a href="tel:{{ store_phone }}" class="text-cream/80 hover:text-clay-light">{{ store_phone }}</a></li>
+        <li><a href="mailto:{{ store_email }}" class="text-cream/80 hover:text-clay-light">{{ store_email }}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  {# Payments + bottom bar #}
+  <div class="border-t border-cream/10">
+    <div class="container-x flex flex-col items-center justify-between gap-4 py-6 text-[11px] uppercase tracking-[0.15em] text-cream/40 md:flex-row">
+      <p>© {% now "Y" %} {{ store_name|upper }}. All rights reserved.</p>
+      <div class="flex items-center gap-2">
+        <span class="border border-cream/15 px-2.5 py-1.5">COD</span>
+        <span class="border border-cream/15 px-2.5 py-1.5">Visa</span>
+        <span class="border border-cream/15 px-2.5 py-1.5">Mastercard</span>
+        <span class="border border-cream/15 px-2.5 py-1.5">JazzCash</span>
+        <span class="border border-cream/15 px-2.5 py-1.5">EasyPaisa</span>
+      </div>
+    </div>
+  </div>
+</footer>

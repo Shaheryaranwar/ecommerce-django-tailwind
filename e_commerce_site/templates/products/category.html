@@ -1,0 +1,33 @@
+{% extends "products/product_list.html" %}
+{% load price_filters %}
+
+{% block page_title %}{{ category.meta_title|default:category.name }}{% endblock %}
+
+{% block meta_description %}{{ category.meta_description|default:category.description|default:"Hand-finished furniture, delivered nationwide."|truncatechars:160 }}{% endblock %}
+
+{% block listing_header %}
+<nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+  <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+  <i data-lucide="chevron-right" class="h-3 w-3"></i>
+  {% if category.parent %}
+    <a href="{{ category.parent.get_absolute_url }}" class="transition-colors hover:text-clay">{{ category.parent.name }}</a>
+    <i data-lucide="chevron-right" class="h-3 w-3"></i>
+  {% endif %}
+  <span class="font-semibold text-bark">{{ category.name }}</span>
+</nav>
+<h1 class="mt-4 font-display text-3xl text-bark md:text-5xl">{{ category.name }}</h1>
+<p class="mt-3 max-w-xl text-sm text-cocoa">
+  {{ category.description|default:"Hand-finished pieces, built to last." }}
+</p>
+
+{% if category.children.all %}
+<div class="mt-6 flex flex-wrap gap-2">
+  <a href="{{ category.get_absolute_url }}" class="border border-bark bg-bark px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-cream">All {{ category.name }}</a>
+  {% for child in category.children.all %}
+    <a href="{{ child.get_absolute_url }}" class="border border-linen bg-paper px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-cocoa transition-colors hover:border-bark hover:text-bark">
+      {{ child.name }}
+    </a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

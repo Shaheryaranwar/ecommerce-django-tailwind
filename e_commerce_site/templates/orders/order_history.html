@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load price_filters %}
+
+{% block title %}Order History — {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="border-b border-linen bg-paper">
+  <div class="container-x flex flex-wrap items-end justify-between gap-4 py-8 md:py-12">
+    <div>
+      <nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+        <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+        <i data-lucide="chevron-right" class="h-3 w-3"></i>
+        <span class="font-semibold text-bark">Orders</span>
+      </nav>
+      <h1 class="mt-4 font-display text-3xl text-bark md:text-5xl">Order history</h1>
+    </div>
+  </div>
+</section>
+
+<section class="container-x py-10 md:py-14">
+  {% if orders %}
+    <div class="overflow-x-auto border border-linen bg-paper">
+      <table class="w-full min-w-[640px] text-sm">
+        <thead>
+          <tr class="border-b border-linen bg-sand/50 text-left text-[10px] font-bold uppercase tracking-[0.18em] text-stone">
+            <th class="px-6 py-4">Order</th>
+            <th class="px-6 py-4">Date</th>
+            <th class="px-6 py-4">Items</th>
+            <th class="px-6 py-4">Payment</th>
+            <th class="px-6 py-4">Total</th>
+            <th class="px-6 py-4">Status</th>
+            <th class="px-6 py-4 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-linen">
+          {% for order in orders %}
+            <tr class="transition-colors hover:bg-sand/30">
+              <td class="px-6 py-5 font-display text-base text-bark">#{{ order.id }}</td>
+              <td class="px-6 py-5 text-cocoa">{{ order.created_at|date:"M j, Y" }}</td>
+              <td class="px-6 py-5 text-cocoa">{{ order.items.count }}</td>
+              <td class="px-6 py-5">
+                <span class="text-cocoa">{{ order.payment.get_method_display }}</span>
+              </td>
+              <td class="px-6 py-5 font-semibold text-bark">{{ order.get_total_cost|pkr }}</td>
+              <td class="px-6 py-5">
+                <span class="inline-flex items-center gap-1.5 border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em]
+                             {% if order.status == 'cancelled' %}border-red-200 text-red-600{% elif order.status == 'delivered' %}border-moss/40 text-moss{% else %}border-clay/40 text-clay{% endif %}">
+                  <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                  {{ order.get_status_display }}
+                </span>
+              </td>
+              <td class="px-6 py-5 text-right">
+                <a href="{% url 'orders:order_detail' order.id %}" class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.14em] text-bark transition-colors hover:text-clay">
+                  View <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="border border-dashed border-linen bg-paper py-24 text-center">
+      <i data-lucide="package" class="mx-auto h-12 w-12 text-stone/40"></i>
+      <h2 class="mt-5 font-display text-3xl text-bark">No orders yet</h2>
+      <p class="mt-2 text-sm text-stone">Your future favourites are waiting in the collection.</p>
+      <a href="{% url 'products:product_list' %}" class="btn-dark mt-8">Start shopping</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{% if is_edit %}Edit Project{% else %}Add Project{% endif %} — {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="container-x flex justify-center py-12 md:py-16">
+  <div class="w-full max-w-2xl">
+    <a href="{% url 'community:dashboard' %}" class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-stone transition-colors hover:text-clay">
+      <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i> Back to dashboard
+    </a>
+
+    <p class="eyebrow mt-8">Community</p>
+    <h1 class="mt-3 font-display text-3xl text-bark md:text-4xl">{% if is_edit %}Edit project{% else %}Share a project{% endif %}</h1>
+    <p class="mt-3 text-sm text-cocoa">
+      Tell the story of what you learned or built, and attach photos or a document as proof.
+      Your project is reviewed before it goes live.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="mt-8 border border-linen bg-paper p-6 md:p-8">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="mb-5 border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="space-y-6">
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.title.id_for_label }}">Title *</label>
+          {% render_field form.title class="input" %}
+          {% for error in form.title.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.category.id_for_label }}">Category *</label>
+          {% render_field form.category class="input" %}
+          {% for error in form.category.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.description.id_for_label }}">Description *</label>
+          {% render_field form.description class="input min-h-36" %}
+          {% for error in form.description.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.images.id_for_label }}">Photos</label>
+          {% render_field form.images class="block w-full text-sm text-cocoa file:mr-4 file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-[11px] file:font-bold file:uppercase file:tracking-[0.14em] file:text-bark hover:file:bg-linen" %}
+          <p class="mt-1 text-xs text-stone">{{ form.images.help_text }}</p>
+          {% for error in form.images.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+
+        {% if is_edit and project.images.all %}
+          <div class="grid grid-cols-3 gap-3 sm:grid-cols-5">
+            {% for image in project.images.all %}
+              <div class="group relative">
+                <img src="{{ image.image.url }}" alt="{{ image.caption|default:project.title }}" class="aspect-square w-full object-cover" />
+                <form method="post" action="{% url 'community:image_delete' image.pk %}" class="absolute right-1.5 top-1.5"
+                      onsubmit="return confirm('Remove this photo?');">
+                  {% csrf_token %}
+                  <button type="submit" class="flex h-6 w-6 items-center justify-center bg-bark/80 text-cream transition-colors hover:bg-red-600" aria-label="Remove photo">
+                    <i data-lucide="x" class="h-3.5 w-3.5"></i>
+                  </button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div>
+          <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.document.id_for_label }}">Proof document</label>
+          {% render_field form.document class="block w-full text-sm text-cocoa file:mr-4 file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-[11px] file:font-bold file:uppercase file:tracking-[0.14em] file:text-bark hover:file:bg-linen" %}
+          <p class="mt-1 text-xs text-stone">{{ form.document.help_text }}</p>
+          {% for error in form.document.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+        </div>
+
+        {% if is_edit and project.documents.all %}
+          <p class="text-xs text-cocoa">
+            Current document: <span class="font-semibold text-bark">{{ project.documents.first.title }}</span> — uploading a new one replaces it.
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="mt-8 flex items-center gap-3">
+        <button type="submit" class="btn-dark">
+          {% if is_edit %}Save changes{% else %}Submit for review{% endif %}
+        </button>
+        <a href="{% url 'community:dashboard' %}" class="btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}My Account — {{ store_name }}{% endblock %}
+
+{% block content %}
+<section class="border-b border-linen bg-paper">
+  <div class="container-x py-8 md:py-12">
+    <nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+      <i data-lucide="chevron-right" class="h-3 w-3"></i>
+      <span class="font-semibold text-bark">My account</span>
+    </nav>
+    <h1 class="mt-4 font-display text-3xl text-bark md:text-5xl">My account</h1>
+  </div>
+</section>
+
+<section class="container-x py-10 md:py-14">
+  <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
+
+    {# quick links #}
+    <aside class="space-y-3 lg:col-span-1">
+      <a href="{% url 'orders:order_history' %}" class="flex items-center justify-between border border-linen bg-paper p-5 transition-colors hover:border-bark">
+        <span class="flex items-center gap-3 text-sm font-bold text-bark">
+          <i data-lucide="package" class="h-5 w-5 text-clay"></i> Order history
+        </span>
+        <i data-lucide="arrow-right" class="h-4 w-4 text-stone"></i>
+      </a>
+      <a href="{% url 'community:dashboard' %}" class="flex items-center justify-between border border-linen bg-paper p-5 transition-colors hover:border-bark">
+        <span class="flex items-center gap-3 text-sm font-bold text-bark">
+          <i data-lucide="hammer" class="h-5 w-5 text-clay"></i> My dashboard
+        </span>
+        <i data-lucide="arrow-right" class="h-4 w-4 text-stone"></i>
+      </a>
+      <a href="{% url 'wishlist:wishlist' %}" class="flex items-center justify-between border border-linen bg-paper p-5 transition-colors hover:border-bark">
+        <span class="flex items-center gap-3 text-sm font-bold text-bark">
+          <i data-lucide="heart" class="h-5 w-5 text-clay"></i> Wishlist
+        </span>
+        <i data-lucide="arrow-right" class="h-4 w-4 text-stone"></i>
+      </a>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="flex w-full items-center justify-between border border-linen bg-paper p-5 transition-colors hover:border-red-300">
+          <span class="flex items-center gap-3 text-sm font-bold text-bark">
+            <i data-lucide="log-out" class="h-5 w-5 text-stone"></i> Sign out
+          </span>
+          <i data-lucide="arrow-right" class="h-4 w-4 text-stone"></i>
+        </button>
+      </form>
+    </aside>
+
+    {# profile form #}
+    <div class="lg:col-span-2">
+      <form method="post" class="border border-linen bg-paper p-8">
+        {% csrf_token %}
+        <div class="flex items-center gap-4 border-b border-linen pb-6">
+          <span class="flex h-14 w-14 items-center justify-center rounded-full bg-bark font-display text-xl text-cream">
+            {{ user.first_name|default:user.username|slice:":1"|upper }}
+          </span>
+          <div>
+            <p class="font-display text-xl text-bark">{{ user.first_name }} {{ user.last_name }}</p>
+            <p class="text-sm text-stone">@{{ user.username }} · Member since {{ user.date_joined|date:"M Y" }}</p>
+          </div>
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="mt-5 border border-red-200 bg-red-50 p-4 text-sm text-red-700">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.first_name.id_for_label }}">First name</label>
+            {% render_field form.first_name class="input" %}
+            {% for error in form.first_name.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.last_name.id_for_label }}">Last name</label>
+            {% render_field form.last_name class="input" %}
+            {% for error in form.last_name.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.email.id_for_label }}">Email</label>
+            {% render_field form.email class="input" %}
+            {% for error in form.email.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.phone.id_for_label }}">Phone</label>
+            {% render_field form.phone class="input" %}
+            {% for error in form.phone.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div class="sm:col-span-2">
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.address.id_for_label }}">Address</label>
+            {% render_field form.address class="input" %}
+            {% for error in form.address.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.city.id_for_label }}">City</label>
+            {% render_field form.city class="input" %}
+            {% for error in form.city.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.16em] text-cocoa" for="{{ form.postal_code.id_for_label }}">Postal code</label>
+            {% render_field form.postal_code class="input" %}
+            {% for error in form.postal_code.errors %}<p class="mt-1 text-xs text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn-dark mt-7">Save changes</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

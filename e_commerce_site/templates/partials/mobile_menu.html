@@ -1,0 +1,54 @@
+{% load price_filters %}
+<div id="mobile-menu" class="fixed inset-0 z-[80] hidden">
+  <div id="mobile-menu-backdrop" class="absolute inset-0 bg-bark/50 opacity-0 transition-opacity duration-300"></div>
+  <div id="mobile-menu-panel" class="absolute inset-y-0 left-0 flex w-[85%] max-w-sm -translate-x-full flex-col bg-cream transition-transform duration-300 ease-out">
+
+    <div class="flex items-center justify-between border-b border-linen px-5 py-4">
+      <span class="font-display text-xl font-semibold text-bark">Aangan<span class="text-clay"> Living</span></span>
+      <button type="button" id="mobile-menu-close" class="flex h-10 w-10 items-center justify-center text-bark" aria-label="Close menu">
+        <i data-lucide="x" class="h-5 w-5"></i>
+      </button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-5 py-4">
+      <a href="{% url 'products:product_list' %}" class="mobile-nav-link">Shop All</a>
+      {% for category in nav_categories %}
+        {% if category.children.all %}
+          <div class="border-b border-linen">
+            <button type="button" class="mobile-accordion-toggle flex w-full items-center justify-between py-4 text-[13px] font-bold uppercase tracking-[0.14em] text-bark">
+              {{ category.name }}
+              <i data-lucide="chevron-down" class="h-4 w-4 text-stone transition-transform duration-300"></i>
+            </button>
+            <div class="mobile-accordion-body hidden pb-4">
+              <a href="{{ category.get_absolute_url }}" class="block py-2 pl-4 text-sm font-semibold text-clay">All {{ category.name }}</a>
+              {% for child in category.children.all %}
+                <a href="{{ child.get_absolute_url }}" class="block py-2 pl-4 text-sm text-cocoa">{{ child.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <a href="{{ category.get_absolute_url }}" class="mobile-nav-link block border-b border-linen py-4">{{ category.name }}</a>
+        {% endif %}
+      {% endfor %}
+      <a href="{% url 'products:product_list' %}?is_new=1" class="mobile-nav-link block border-b border-linen py-4">New In</a>
+      <a href="{% url 'products:product_list' %}?on_sale=1" class="mobile-nav-link block border-b border-linen py-4 text-clay">Sale</a>
+      <a href="{% url 'community:showcase' %}" class="mobile-nav-link block border-b border-linen py-4">Community</a>
+      <a href="{% url 'core:about' %}" class="mobile-nav-link block border-b border-linen py-4">Our Story</a>
+      <a href="{% url 'core:contact' %}" class="mobile-nav-link block border-b border-linen py-4">Contact</a>
+    </nav>
+
+    <div class="border-t border-linen px-5 py-4">
+      {% if user.is_authenticated %}
+        <div class="flex gap-3">
+          <a href="{% url 'accounts:profile' %}" class="btn-outline flex-1 !px-3 !py-3">My account</a>
+          <a href="{% url 'orders:order_history' %}" class="btn-outline flex-1 !px-3 !py-3">Orders</a>
+        </div>
+      {% else %}
+        <div class="flex gap-3">
+          <a href="{% url 'accounts:login' %}" class="btn-outline flex-1 !px-3 !py-3">Sign in</a>
+          <a href="{% url 'accounts:register' %}" class="btn-dark flex-1 !px-3 !py-3">Register</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load price_filters %}
+
+{% block title %}Wishlist — {{ store_name }}{% endblock %}
+{% block page_key %}wishlist{% endblock %}
+
+{% block content %}
+<section class="border-b border-linen bg-paper">
+  <div class="container-x py-8 md:py-12">
+    <nav class="flex items-center gap-2 text-xs text-stone" aria-label="Breadcrumb">
+      <a href="{% url 'core:home' %}" class="transition-colors hover:text-clay">Home</a>
+      <i data-lucide="chevron-right" class="h-3 w-3"></i>
+      <span class="font-semibold text-bark">Wishlist</span>
+    </nav>
+    <h1 class="mt-4 font-display text-3xl text-bark md:text-5xl">My wishlist</h1>
+  </div>
+</section>
+
+<section class="container-x py-10 md:py-14">
+  {% if products %}
+    <p class="mb-8 text-sm text-cocoa">
+      {{ products|length }} saved piece{{ products|length|pluralize }}
+      {% if not user.is_authenticated %}
+        — <a href="{% url 'accounts:login' %}" class="font-bold text-clay hover:underline">sign in</a> to keep them forever.
+      {% endif %}
+    </p>
+    <div class="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+      {% for product in products %}
+        <div data-reveal>{% include "partials/product_card.html" %}</div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="border border-dashed border-linen bg-paper py-24 text-center">
+      <i data-lucide="heart" class="mx-auto h-12 w-12 text-stone/40"></i>
+      <h2 class="mt-5 font-display text-3xl text-bark">Nothing saved yet</h2>
+      <p class="mt-2 text-sm text-stone">Tap the heart on any piece to keep it here.</p>
+      <a href="{% url 'products:product_list' %}" class="btn-dark mt-8">Discover the collection</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

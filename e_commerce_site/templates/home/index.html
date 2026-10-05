@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static price_filters %}
+
+{% block title %}{{ store_name }} — Handcrafted Furniture &amp; Home Décor{% endblock %}
+
+{% block content %}
+
+{# ================= USP STRIP ================= #}
+<section class="border-y border-linen bg-paper">
+  <div class="container-x grid grid-cols-2 divide-x divide-linen md:grid-cols-4">
+    <div class="flex items-center gap-3 px-4 py-5 md:px-6">
+      <i data-lucide="truck" class="h-5 w-5 shrink-0 text-clay"></i>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-bark">Free delivery</p>
+        <p class="text-xs text-stone">On orders above Rs 100,000</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 px-4 py-5 md:px-6">
+      <i data-lucide="shield-check" class="h-5 w-5 shrink-0 text-clay"></i>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-bark">5-year warranty</p>
+        <p class="text-xs text-stone">On all solid wood frames</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 border-l border-linen px-4 py-5 md:px-6">
+      <i data-lucide="wrench" class="h-5 w-5 shrink-0 text-clay"></i>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-bark">Free assembly</p>
+        <p class="text-xs text-stone">In Lahore, Karachi &amp; Islamabad</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 border-l border-linen px-4 py-5 md:px-6">
+      <i data-lucide="rotate-ccw" class="h-5 w-5 shrink-0 text-clay"></i>
+      <div>
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-bark">14-day returns</p>
+        <p class="text-xs text-stone">No-questions-asked policy</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ================= MANAGED SECTIONS (SiteSection order) ================= #}
+{% for section in sections %}
+  {% if section.type == "hero" %}
+    {% include "partials/home/hero.html" %}
+  {% elif section.type == "featured_categories" %}
+    {% include "partials/home/featured_categories.html" %}
+  {% elif section.type == "trending_products" %}
+    {% include "partials/home/trending.html" %}
+  {% elif section.type == "spotlight" %}
+    {% include "partials/home/spotlight.html" %}
+  {% elif section.type == "promo" %}
+    {% include "partials/home/promo.html" %}
+  {% endif %}
+{% endfor %}
+
+{# ================= FEATURED PRODUCTS ================= #}
+{% if featured_products %}
+<section class="section-pad bg-paper">
+  <div class="container-x">
+    <div class="mb-10 text-center">
+      <p class="eyebrow">Handpicked for you</p>
+      <h2 class="mt-3 font-display text-3xl text-bark md:text-4xl">Signature pieces</h2>
+    </div>
+    <div class="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+      {% for product in featured_products %}
+        <div data-reveal>{% include "partials/product_card.html" %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ================= EDITORIAL BANNER ================= #}
+<section class="relative overflow-hidden bg-bark text-cream">
+  <div class="container-x grid grid-cols-1 items-center gap-10 py-16 md:py-24 lg:grid-cols-2">
+    <div class="order-2 lg:order-1" data-reveal>
+      <img src="https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1200&q=80"
+           alt="The dining room collection" class="aspect-[16/10] w-full object-cover" />
+    </div>
+    <div class="order-1 lg:order-2" data-reveal>
+      <p class="eyebrow !text-clay-light">The dining room collection</p>
+      <h2 class="mt-4 font-display text-3xl leading-tight text-cream md:text-5xl">
+        Gather around a table<br class="hidden md:block" /> made for generations
+      </h2>
+      <p class="mt-6 max-w-md text-[15px] leading-relaxed text-cream/70">
+        From intimate family dinners to Eid feasts — solid teak and walnut tables,
+        hand-finished and built to host a lifetime of memories.
+      </p>
+      <a href="{% url 'products:category_detail' slug='dining' %}" class="btn-light mt-9">
+        Explore dining <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ================= NEW ARRIVALS ================= #}
+{% if new_arrivals %}
+<section class="section-pad">
+  <div class="container-x">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">Just landed</p>
+        <h2 class="mt-3 font-display text-3xl text-bark md:text-4xl">New arrivals</h2>
+      </div>
+      <a href="{% url 'products:product_list' %}?is_new=1" class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-bark transition-colors hover:text-clay">
+        See all new pieces <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </a>
+    </div>
+    <div class="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+      {% for product in new_arrivals %}
+        <div data-reveal>{% include "partials/product_card.html" %}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ================= TESTIMONIALS ================= #}
+<section class="section-pad bg-sand/60">
+  <div class="container-x">
+    <div class="mb-10 text-center">
+      <p class="eyebrow">Word of mouth</p>
+      <h2 class="mt-3 font-display text-3xl text-bark md:text-4xl">Loved across Pakistan</h2>
+    </div>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {% for t in testimonials %}
+        <figure class="border border-linen bg-paper p-8" data-reveal>
+          <div class="flex gap-1 text-clay">
+            {% for _ in "12345" %}<i data-lucide="star" class="h-4 w-4 fill-current"></i>{% endfor %}
+          </div>
+          <blockquote class="mt-5 font-display text-lg leading-relaxed text-bark">“{{ t.text }}”</blockquote>
+          <figcaption class="mt-6 text-[11px] font-bold uppercase tracking-[0.16em] text-stone">
+            {{ t.name }} — {{ t.city }}
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ================= CRAFT / SHOWROOM STRIP ================= #}
+<section class="section-pad">
+  <div class="container-x grid grid-cols-1 gap-8 lg:grid-cols-2">
+    <a href="{% url 'core:about' %}" class="group relative block overflow-hidden" data-reveal>
+      <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=1200&q=80"
+           alt="Our workshop" class="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <div class="absolute inset-0 bg-bark/40"></div>
+      <div class="absolute inset-x-0 bottom-0 p-8">
+        <p class="eyebrow !text-clay-light">Our story</p>
+        <h3 class="mt-2 font-display text-2xl text-cream md:text-3xl">From the workshop to your home</h3>
+        <span class="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-cream">
+          Meet the makers <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </span>
+      </div>
+    </a>
+    <a href="{% url 'core:contact' %}" class="group relative block overflow-hidden" data-reveal>
+      <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1200&q=80"
+           alt="Aangan Living showroom" class="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+      <div class="absolute inset-0 bg-bark/40"></div>
+      <div class="absolute inset-x-0 bottom-0 p-8">
+        <p class="eyebrow !text-clay-light">Visit us</p>
+        <h3 class="mt-2 font-display text-2xl text-cream md:text-3xl">Experience it in person</h3>
+        <span class="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-cream">
+          Find a showroom <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </span>
+      </div>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.django/
+venv/
+env/
+
+# Django
+db.sqlite3
+db.sqlite3*.bak
+staticfiles/
+mediafiles/
+mediafiles.clothing.bak/
+
+# Node
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store

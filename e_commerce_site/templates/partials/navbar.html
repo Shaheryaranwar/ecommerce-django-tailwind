@@ -1,0 +1,122 @@
+{% load price_filters %}
+<header id="site-header" class="sticky top-0 z-50 border-b border-linen/70 bg-cream/95 backdrop-blur transition-shadow duration-300">
+  <nav class="container-x relative flex h-16 items-center justify-between gap-4 lg:h-20">
+
+    {# Mobile: hamburger #}
+    <button type="button" id="mobile-menu-open" class="-ml-1 flex h-10 w-10 items-center justify-center text-bark lg:hidden" aria-label="Open menu">
+      <i data-lucide="menu" class="h-5 w-5"></i>
+    </button>
+
+    {# Logo #}
+    <a href="{% url 'core:home' %}" class="flex flex-col items-start leading-none">
+      <span class="font-display text-[22px] font-semibold tracking-tight text-bark lg:text-2xl">Aangan<span class="text-clay"> Living</span></span>
+      <span class="mt-1 hidden text-[9px] font-bold uppercase tracking-[0.35em] text-stone sm:block">Furniture &amp; Décor</span>
+    </a>
+
+    {# Desktop nav with mega menus #}
+    <div class="hidden items-center gap-7 lg:flex">
+      <a href="{% url 'products:product_list' %}" class="nav-link">Shop All</a>
+      {% for category in nav_categories %}
+        <div class="group">
+          <a href="{{ category.get_absolute_url }}"
+             class="nav-link flex items-center gap-1 {% if active_category and category.slug == active_category %}text-clay{% endif %}">
+            {{ category.name }}
+            {% if category.children.all %}
+              <i data-lucide="chevron-down" class="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180"></i>
+            {% endif %}
+          </a>
+          {% if category.children.all %}
+            <div class="invisible absolute inset-x-0 top-full left-0 border-b border-linen bg-paper opacity-0 shadow-[0_30px_60px_-20px_rgba(38,32,26,0.18)] transition-all duration-300 group-hover:visible group-hover:opacity-100">
+              <div class="container-x grid grid-cols-12 gap-8 py-10">
+                <div class="col-span-8 grid grid-cols-3 gap-8">
+                  <div class="col-span-3">
+                    <a href="{{ category.get_absolute_url }}" class="font-display text-xl text-bark transition-colors hover:text-clay">
+                      {{ category.name }}
+                    </a>
+                    <p class="mt-1 text-sm text-stone">{{ category.description|truncatechars:90 }}</p>
+                  </div>
+                  {% for child in category.children.all %}
+                    <div>
+                      <a href="{{ child.get_absolute_url }}" class="group/child flex items-center gap-2 border-b border-linen pb-3 text-[13px] font-bold uppercase tracking-[0.14em] text-bark transition-colors hover:text-clay">
+                        {{ child.name }}
+                        <i data-lucide="arrow-up-right" class="h-3.5 w-3.5 text-clay transition-transform duration-300 group-hover/child:translate-x-0.5 group-hover/child:-translate-y-0.5"></i>
+                      </a>
+                    </div>
+                  {% endfor %}
+                </div>
+                <div class="col-span-4">
+                  <a href="{{ category.get_absolute_url }}" class="group/img block overflow-hidden">
+                    {% if category.display_image %}
+                      <img src="{{ category.display_image }}" alt="{{ category.name }}" class="aspect-[16/9] w-full object-cover transition-transform duration-700 group-hover/img:scale-105" loading="lazy" />
+                    {% endif %}
+                    <span class="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-bark group-hover/img:text-clay">
+                      Explore {{ category.name }}
+                      <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <a href="{% url 'products:product_list' %}?is_new=1" class="nav-link">New In</a>
+      <a href="{% url 'products:product_list' %}?on_sale=1" class="nav-link text-clay">Sale</a>
+      <a href="{% url 'community:showcase' %}" class="nav-link">Community</a>
+    </div>
+
+    {# Right icons #}
+    <div class="flex items-center gap-1 sm:gap-2">
+      {# Search toggle #}
+      <button type="button" id="search-toggle" class="flex h-10 w-10 items-center justify-center text-bark transition-colors hover:text-clay" aria-label="Search">
+        <i data-lucide="search" class="h-[18px] w-[18px]"></i>
+      </button>
+
+      {# Account #}
+      <div class="group/account relative hidden sm:block">
+        <a href="{% if user.is_authenticated %}{% url 'accounts:profile' %}{% else %}{% url 'accounts:login' %}{% endif %}"
+           class="flex h-10 w-10 items-center justify-center text-bark transition-colors hover:text-clay" aria-label="Account">
+          <i data-lucide="user" class="h-[18px] w-[18px]"></i>
+        </a>
+        <div class="invisible absolute right-0 top-full w-52 border border-linen bg-paper py-2 opacity-0 shadow-[0_20px_40px_-16px_rgba(38,32,26,0.2)] transition-all duration-200 group-hover/account:visible group-hover/account:opacity-100">
+          {% if user.is_authenticated %}
+            <p class="border-b border-linen px-5 py-2.5 text-[13px] font-bold text-bark">Hi, {{ user.first_name|default:user.username }}</p>
+            <a href="{% url 'accounts:profile' %}" class="block px-5 py-2.5 text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">My profile</a>
+            <a href="{% url 'community:dashboard' %}" class="block px-5 py-2.5 text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">My dashboard</a>
+            <a href="{% url 'orders:order_history' %}" class="block px-5 py-2.5 text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">Order history</a>
+            <a href="{% url 'wishlist:wishlist' %}" class="block px-5 py-2.5 text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">Wishlist</a>
+            <form method="post" action="{% url 'accounts:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="block w-full px-5 py-2.5 text-left text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">Sign out</button>
+            </form>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="block px-5 py-2.5 text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">Sign in</a>
+            <a href="{% url 'accounts:register' %}" class="block px-5 py-2.5 text-sm text-cocoa transition-colors hover:bg-sand hover:text-bark">Create account</a>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Wishlist #}
+      <a href="{% url 'wishlist:wishlist' %}" class="relative flex h-10 w-10 items-center justify-center text-bark transition-colors hover:text-clay" aria-label="Wishlist">
+        <i data-lucide="heart" class="h-[18px] w-[18px]"></i>
+        <span id="wishlist-count" class="{% if wishlist_count == 0 %}hidden{% endif %} absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[9px] font-bold text-white">{{ wishlist_count }}</span>
+      </a>
+
+      {# Cart #}
+      <a href="{% url 'cart:cart_detail' %}" class="relative flex h-10 w-10 items-center justify-center text-bark transition-colors hover:text-clay" aria-label="Cart">
+        <i data-lucide="shopping-bag" class="h-[18px] w-[18px]"></i>
+        <span id="cart-count" class="{% if cart_count == 0 %}hidden{% endif %} absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-bark px-1 text-[9px] font-bold text-cream">{{ cart_count }}</span>
+      </a>
+    </div>
+  </nav>
+
+  {# Search overlay #}
+  <div id="search-overlay" class="absolute inset-x-0 top-full hidden border-b border-linen bg-paper shadow-[0_30px_60px_-20px_rgba(38,32,26,0.18)]">
+    <form action="{% url 'core:search' %}" method="get" class="container-x flex items-center gap-4 py-6">
+      <i data-lucide="search" class="h-5 w-5 text-stone"></i>
+      <input type="search" name="q" id="search-input" autocomplete="off" placeholder="Search sofas, dining tables, wardrobes…"
+             class="w-full bg-transparent font-display text-lg text-bark placeholder:text-stone/60 focus:outline-none md:text-xl" />
+      <button type="button" id="search-close" class="text-xs font-bold uppercase tracking-[0.18em] text-stone hover:text-bark">Close</button>
+    </form>
+  </div>
+</header>

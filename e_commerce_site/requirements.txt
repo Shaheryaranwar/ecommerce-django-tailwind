@@ -1,0 +1,5 @@
+Django>=5.0,<5.3
+django-widget-tweaks>=1.5
+Pillow>=10.0
+# PostgreSQL in production (uncomment):
+# psycopg[binary]>=3.1

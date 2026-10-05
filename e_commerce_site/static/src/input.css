@@ -1,3 +1,109 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream font-sans text-bark antialiased;
+  }
+  ::selection {
+    @apply bg-clay text-white;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10;
+  }
+
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 px-7 py-4 text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300;
+  }
+  .btn-dark {
+    @apply btn bg-bark text-cream hover:bg-clay;
+  }
+  .btn-clay {
+    @apply btn bg-clay text-white hover:bg-clay-dark;
+  }
+  .btn-outline {
+    @apply btn border border-bark/25 bg-transparent text-bark hover:border-bark hover:bg-bark hover:text-cream;
+  }
+  .btn-light {
+    @apply btn bg-white text-bark hover:bg-sand;
+  }
+  .btn-disabled {
+    @apply btn cursor-not-allowed bg-linen text-stone;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.25em] text-clay;
+  }
+
+  .nav-link {
+    @apply relative py-2 text-[12px] font-bold uppercase tracking-[0.16em] text-bark transition-colors duration-300 hover:text-clay;
+  }
+
+  .input {
+    @apply w-full border border-linen bg-white px-4 py-3 text-sm text-bark placeholder:text-stone/70 focus:border-bark focus:outline-none;
+  }
+
+  .section-pad {
+    @apply py-14 md:py-20;
+  }
+
+  .card-badge {
+    @apply absolute left-3 top-3 z-10 bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-bark;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-dot {
+    @apply h-1 w-8 cursor-pointer bg-cream/30 transition-all duration-300;
+  }
+  .hero-dot.is-active {
+    @apply w-12 bg-clay-light;
+  }
+
+  .attr-pill {
+    @apply border border-linen bg-paper px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-cocoa transition-all duration-200 hover:border-bark;
+  }
+  .attr-pill.attr-selected {
+    @apply border-bark bg-bark text-cream;
+  }
+
+  .rich-text p {
+    @apply mb-3;
+  }
+  .rich-text ul {
+    @apply mb-3 list-disc pl-5;
+  }
+  .rich-text h2, .rich-text h3 {
+    @apply mb-2 mt-5 font-display text-lg font-medium text-bark;
+  }
+
+  .toast-enter {
+    animation: toast-in 0.35s ease both;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

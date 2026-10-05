@@ -1,0 +1,24 @@
+<a href="{{ category.get_absolute_url }}" class="group relative block overflow-hidden bg-sand">
+  <div class="aspect-[4/5] overflow-hidden sm:aspect-[3/4]">
+    {% if category.display_image %}
+      <img src="{{ category.display_image }}" alt="{{ category.name }}"
+           class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]" loading="lazy" />
+    {% else %}
+      <div class="flex h-full items-center justify-center text-stone">
+        <i data-lucide="sofa" class="h-10 w-10"></i>
+      </div>
+    {% endif %}
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-t from-bark/70 via-bark/10 to-transparent"></div>
+  <div class="absolute inset-x-0 bottom-0 flex items-end justify-between p-5">
+    <div>
+      <h3 class="font-display text-xl text-cream md:text-2xl">{{ category.name }}</h3>
+      {% if category.description %}
+        <p class="mt-1 hidden text-xs text-cream/70 sm:block">{{ category.description|truncatechars:60 }}</p>
+      {% endif %}
+    </div>
+    <span class="flex h-10 w-10 shrink-0 items-center justify-center border border-cream/40 text-cream transition-all duration-300 group-hover:border-clay group-hover:bg-clay">
+      <i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+    </span>
+  </div>
+</a>

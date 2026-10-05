@@ -1,14 +1,33 @@
 from django.contrib import admin
+
 from .models import Order, OrderItem
-# Register your models here.
+
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
-    row_id_fields = ['product', 'variant', 'price', 'quantity']
+    readonly_fields = ("variant_name", "sku")
 
-@admin.register(Order) 
+
+@admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'phone', 'email', 'created_at', 'paid']
-    list_filter = ['paid', 'created_at']
-    search_fields = ['first_name', 'last_name', 'phone', 'email', 'address', 'city', 'country']
+    list_display = (
+        "id",
+        "user",
+        "first_name",
+        "last_name",
+        "phone",
+        "city",
+        "status",
+        "paid",
+        "total",
+        "created_at",
+    )
+    list_filter = ("status", "paid", "created_at", "city")
+    search_fields = ("first_name", "last_name", "phone", "email", "address")
     inlines = [OrderItemInline]
+    date_hierarchy = "created_at"
+
+    @admin.display(description="Total")
+    def total(self, obj):
+        return f"Rs {obj.get_total_cost():,.0f}"
